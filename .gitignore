@@ -1,0 +1,9 @@
+# Binary
+tetris
+
+# Logs
+*.txt
+*.log
+
+# Emacs backup files
+*~
