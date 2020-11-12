@@ -1,4 +1,5 @@
-# Binary
+# Compiler output
+*.o
 tetris
 
 # Logs
