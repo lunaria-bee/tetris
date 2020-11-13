@@ -1,4 +1,5 @@
 #include "tetris.hpp"
+#include "tetris_log.hpp"
 #include "tetris_ui.hpp"
 #include <locale.h>
 #include <ncurses.h>
@@ -6,6 +7,8 @@
 #include <fstream>
 #include <map>
 #include <thread>
+
+std::ofstream tetris_log::out;
 
 const std::map<int, Command> INPUT_MAP{
   {ERR, Command::DO_NOTHING},
@@ -19,6 +22,8 @@ const std::map<int, Command> INPUT_MAP{
 
 int main()
 {
+  tetris_log::out.open("tetris.log");
+
   // Initialize ncurses
   initscr();
   curs_set(0);
@@ -54,7 +59,6 @@ int main()
   Game game;
   game.active_tetrimino = game.bag.pop();
   std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
-  std::ofstream logfile {"log.txt"};
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
 
