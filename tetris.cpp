@@ -148,6 +148,12 @@ bool Tetrimino::fall(const Playfield& playfield)
   return translate(Point(1, 0), playfield);
 }
 
+bool Tetrimino::hard_drop(const Playfield& playfield)
+{
+  short fall_distance = get_landing(playfield).pivot.row - pivot.row;
+  return translate(Point(fall_distance, 0), playfield);
+}
+
 bool Tetrimino::shift_left(const Playfield& playfield)
 {
   return translate(Point(0, -1), playfield);
@@ -296,6 +302,7 @@ bool Game::try_command(Command command)
       break;
 
     case Command::HARD_DROP:
+      active_tetrimino.hard_drop(playfield);
       break;
   }
 

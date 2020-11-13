@@ -88,6 +88,7 @@ struct Tetrimino
 
   bool translate(const Point& delta, const Playfield& playfield);
   bool fall(const Playfield& playfield);
+  bool hard_drop(const Playfield& playfield);
   bool shift_left(const Playfield& playfield);
   bool shift_right(const Playfield& playfield);
   bool rotate_ccw(const Playfield& playfield);

@@ -64,6 +64,7 @@ int main()
   std::chrono::steady_clock::time_point extended_placement_start;
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
+  bool hard_drop = false;
 
   while (true)
   {
@@ -83,6 +84,9 @@ int main()
         {
           if (command == Command::SOFT_DROP)
             last_drop = tick_start;
+
+          if (command == Command::HARD_DROP)
+            hard_drop = true;
 
           if (extended_placement_active)
           {
@@ -112,7 +116,7 @@ int main()
         extended_placement_active = true;
       }
 
-      if (tick_start > extended_placement_start + extended_placement_max_time)
+      if (hard_drop || tick_start > extended_placement_start + extended_placement_max_time)
       {
         // Lock active tetrimino
         for (const Point& p : game.active_tetrimino.points)
@@ -124,7 +128,9 @@ int main()
         // Draw new tetrinimo
         game.active_tetrimino = game.bag.pop();
 
+        // Reset placement control
         extended_placement_active = false;
+        hard_drop = false;
       }
     }
 
