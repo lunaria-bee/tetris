@@ -2,12 +2,10 @@
 #include "tetris_ui.hpp"
 #include <locale.h>
 #include <ncurses.h>
-#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <map>
-#include <random>
-#include <sstream>
+#include <thread>
 
 const std::map<int, Command> INPUT_MAP{
   {ERR, Command::DO_NOTHING},
@@ -55,17 +53,33 @@ int main()
   // Set up game
   Game game;
   game.active_tetrimino = game.bag.pop();
-  std::chrono::system_clock::time_point last_tick = std::chrono::system_clock::now();
+  std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
   std::ofstream logfile {"log.txt"};
-  while(true)
-  {
-    redraw_playfield(game.playfield, game.active_tetrimino);
-    auto command = INPUT_MAP.find(getch());
-    if (command != INPUT_MAP.end())
-      game.try_command(command->second);
+  std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
 
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    if (now - last_tick >= game.get_tick_duration())
+  while (true)
+  {
+    tick_start = std::chrono::steady_clock::now();
+
+    redraw_playfield(game.playfield, game.active_tetrimino);
+
+    // Process input
+    auto result = INPUT_MAP.find(getch());
+    if (result != INPUT_MAP.end())
+    {
+      Command command = result->second;
+      game.try_command(result->second);
+      if (command == Command::SOFT_DROP)
+      {
+        logfile << std::chrono::duration_cast<std::chrono::milliseconds>(tick_start - last_drop).count()
+                << " (soft drop)" << std::endl;
+        last_drop = tick_start;
+      }
+    }
+
+    // Process drop
+    if (tick_start - last_drop >= game.get_drop_interval())
     {
       if (game.active_tetrimino.is_landed(game.playfield))
       {
@@ -77,8 +91,16 @@ int main()
       {
         game.active_tetrimino.fall(game.playfield);
       }
-      last_tick = now;
+      logfile << std::chrono::duration_cast<std::chrono::milliseconds>(tick_start - last_drop).count()
+              << std::endl;
+      last_drop = tick_start;
     }
+
+    // Delay until next tick
+    tick_end = std::chrono::steady_clock::now();
+    std::chrono::duration<float> work_time = tick_end - tick_start;
+    if (work_time < tick_duration)
+      std::this_thread::sleep_for(tick_duration - work_time);
   }
 
   // Close ncurses window and exit

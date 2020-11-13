@@ -113,7 +113,7 @@ struct Game
   short level = 1;
 
   bool try_command(Command command);
-  std::chrono::duration<float> get_tick_duration();
+  std::chrono::duration<float> get_drop_interval();
 };
 
 short check_collision(const Point& point, const Playfield& playfield);
@@ -124,7 +124,8 @@ Point calculate_srs_offset(short point_index,
                            TetriminoFacing facing_after);
 
 
-const std::chrono::duration<float> tick_duration;
+/* Length of each game tick */
+const std::chrono::duration<float> tick_duration(1.0/60.0);
 
 //! 
 // TODO fill in values

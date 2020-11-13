@@ -289,7 +289,7 @@ bool Game::try_command(Command command)
   return true;
 }
 
-std::chrono::duration<float> Game::get_tick_duration()
+std::chrono::duration<float> Game::get_drop_interval()
 {
   return std::chrono::duration<float>(pow(0.8 - ((level-1) * 0.0007), level-1));
 }
