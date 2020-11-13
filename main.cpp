@@ -71,11 +71,7 @@ int main()
       Command command = result->second;
       game.try_command(result->second);
       if (command == Command::SOFT_DROP)
-      {
-        logfile << std::chrono::duration_cast<std::chrono::milliseconds>(tick_start - last_drop).count()
-                << " (soft drop)" << std::endl;
         last_drop = tick_start;
-      }
     }
 
     // Process drop
