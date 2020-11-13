@@ -213,7 +213,7 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
 {
   short distance_to_landing = 41;
 
-  for (short row=0; row<40 && distance_to_landing>40; row++)
+  for (short row=0; row<40; row++)
   {
     for (const Point& p : points)
     {
@@ -222,13 +222,10 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
     }
   }
 
-  if (distance_to_landing > 40)
+  for (const Point& p : points)
   {
-    for (const Point& p : points)
-    {
-      if (39 - p.row < distance_to_landing)
-        distance_to_landing = 39 - p.row;
-    }
+    if (39 - p.row < distance_to_landing)
+      distance_to_landing = 39 - p.row;
   }
 
   Tetrimino landing = *this;
@@ -314,7 +311,7 @@ short check_collision(const Point& point, const Playfield& playfield)
 {
   short result = CollisionResult::NONE;
 
-  if (point.row > playfield.get_column_base(point.col))
+  if (point.row > 39)
     result |= CollisionResult::FLOOR;
 
   if (point.col < 0 || point.col > 9)
