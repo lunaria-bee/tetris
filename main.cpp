@@ -114,8 +114,14 @@ int main()
 
       if (tick_start > extended_placement_start + extended_placement_max_time)
       {
+        // Lock active tetrimino
         for (const Point& p : game.active_tetrimino.points)
           game.playfield[p] = MINO_COLOR.at(game.active_tetrimino.type);
+
+        // Check for complete rows
+        game.clear_rows();
+
+        // Draw new tetrinimo
         game.active_tetrimino = game.bag.pop();
 
         extended_placement_active = false;

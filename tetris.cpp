@@ -302,6 +302,34 @@ bool Game::try_command(Command command)
   return true;
 }
 
+void Game::clear_rows()
+{
+  for (int row=39; row>0; row--)
+  {
+    // Check if row is full
+    bool row_full(true);
+    for (short col=0; col<10; col++)
+    {
+      if (!playfield[row][col])
+      {
+        row_full = false;
+        break;
+      }
+    }
+
+    // If row is full, clear it and lower upper rows
+    if (row_full)
+    {
+      for (int rowc=row; rowc>0; rowc--)
+      {
+        for (int colc=0; colc<10; colc++)
+          playfield[rowc][colc] = playfield[rowc-1][colc];
+      }
+      row++;
+    }
+  }
+}
+
 std::chrono::duration<float> Game::get_drop_interval()
 {
   return std::chrono::duration<float>(pow(0.8 - ((level-1) * 0.0007), level-1));

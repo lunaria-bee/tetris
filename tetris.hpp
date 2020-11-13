@@ -115,6 +115,7 @@ struct Game
   short level = 1;
 
   bool try_command(Command command);
+  void clear_rows();
   std::chrono::duration<float> get_drop_interval();
 };
 
