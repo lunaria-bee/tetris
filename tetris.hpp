@@ -39,9 +39,10 @@ enum class Command
 
 namespace CollisionResult
 {
-  const short NONE  = 0x00;
-  const short WALL  = 0x01;
-  const short FLOOR = 0x02;
+  const short NONE  = 0;
+  const short WALL  = 1<<0;
+  const short FLOOR = 1<<1;
+  const short MINO  = 1<<2;
 }
 
 struct Point
@@ -91,7 +92,8 @@ struct Tetrimino
   bool shift_right(const Playfield& playfield);
   bool rotate_ccw(const Playfield& playfield);
   bool rotate_cw(const Playfield& playfield);
-  bool is_landed(const Playfield& playfield);
+  bool is_landed(const Playfield& playfield) const;
+  Tetrimino get_landing(const Playfield& playfield) const;
 };
 
 struct Bag

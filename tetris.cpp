@@ -209,15 +209,42 @@ bool Tetrimino::rotate_cw(const Playfield& playfield)
   return true;
 }
 
-bool Tetrimino::is_landed(const Playfield& playfield)
+bool Tetrimino::is_landed(const Playfield& playfield) const
 {
-  for (Point& p : points)
+  for (const Point& p : points)
   {
     if (p.row >= playfield.get_column_base(p.col))
       return true;
   }
 
   return false;
+}
+
+Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
+{
+  short distance_to_landing = 41;
+
+  for (short row=0; row<40 && distance_to_landing>40; row++)
+  {
+    for (const Point& p : points)
+    {
+      if (playfield[row][p.col] && (row - p.row - 1 < distance_to_landing) && (row - p.row - 1 > 0))
+        distance_to_landing = row - p.row - 1;
+    }
+  }
+
+  if (distance_to_landing > 40)
+  {
+    for (const Point& p : points)
+    {
+      if (39 - p.row < distance_to_landing)
+        distance_to_landing = 39 - p.row;
+    }
+  }
+
+  Tetrimino landing = *this;
+
+  return landing;
 }
 
 Bag::Bag()
@@ -303,6 +330,9 @@ short check_collision(const Point& point, const Playfield& playfield)
 
   if (point.col < 0 || point.col > 9)
     result |= CollisionResult::WALL;
+
+  if (playfield[point.row][point.col])
+    result |= CollisionResult::MINO;
 
   return result;
 }
