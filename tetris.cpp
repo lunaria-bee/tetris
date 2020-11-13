@@ -29,17 +29,6 @@ Point& Point::operator-=(const Point& right_op)
   return *this;
 }
 
-short Playfield::get_column_base(short column) const
-{
-  for (int i=39; i>=0; i--)
-  {
-    if (!grid[i][column])
-      return i;
-  }
-
-  return 39;
-}
-
 std::array<short, 10>& Playfield::operator[](short index)
 {
   return grid[index];
@@ -213,7 +202,7 @@ bool Tetrimino::is_landed(const Playfield& playfield) const
 {
   for (const Point& p : points)
   {
-    if (p.row >= playfield.get_column_base(p.col))
+    if (check_collision(p + Point(1, 0), playfield))
       return true;
   }
 
@@ -228,7 +217,7 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
   {
     for (const Point& p : points)
     {
-      if (playfield[row][p.col] && (row - p.row - 1 < distance_to_landing) && (row - p.row - 1 > 0))
+      if (playfield[row][p.col] && (row - p.row - 1 < distance_to_landing) && (row - p.row - 1 >= 0))
         distance_to_landing = row - p.row - 1;
     }
   }
