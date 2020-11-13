@@ -129,6 +129,12 @@ Point calculate_srs_offset(short point_index,
 /* Length of each game tick */
 const std::chrono::duration<float> tick_duration(1.0/60.0);
 
+/* Maximum number of moves permitted in extended placement mode */
+const short extended_placement_max_moves = 15;
+
+/* Extended placement timer duration */
+const std::chrono::duration<float> extended_placement_max_time(0.5);
+
 //! 
 // TODO fill in values
 const std::map<TetriminoType, std::map<TetriminoFacing, std::array<Point, 4>>> SRS_OFFSET_VALUES{

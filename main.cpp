@@ -59,6 +59,9 @@ int main()
   Game game;
   game.active_tetrimino = game.bag.pop();
   std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
+  bool extended_placement_active = false;
+  short extended_placement_moves;
+  std::chrono::steady_clock::time_point extended_placement_start;
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
 
@@ -72,26 +75,51 @@ int main()
     auto result = INPUT_MAP.find(getch());
     if (result != INPUT_MAP.end())
     {
-      Command command = result->second;
-      game.try_command(result->second);
-      if (command == Command::SOFT_DROP)
-        last_drop = tick_start;
+      if (!extended_placement_active || extended_placement_moves <= extended_placement_max_moves)
+      {
+        Command command = result->second;
+        bool command_success = game.try_command(result->second);
+        if (command_success)
+        {
+          if (command == Command::SOFT_DROP)
+            last_drop = tick_start;
+
+          if (extended_placement_active)
+          {
+            extended_placement_start = tick_start;
+            ++extended_placement_moves;
+          }
+        }
+      }
     }
 
     // Process drop
     if (tick_start - last_drop >= game.get_drop_interval())
     {
-      if (game.active_tetrimino.is_landed(game.playfield))
+      bool fell = game.active_tetrimino.fall(game.playfield);
+      if (fell && extended_placement_active)
+        extended_placement_active = false;
+      last_drop = tick_start;
+    }
+
+    // Check for mino landing
+    if (game.active_tetrimino.is_landed(game.playfield))
+    {
+      if (!extended_placement_active)
+      {
+        extended_placement_start = tick_start;
+        extended_placement_moves = 0;
+        extended_placement_active = true;
+      }
+
+      if (tick_start > extended_placement_start + extended_placement_max_time)
       {
         for (const Point& p : game.active_tetrimino.points)
           game.playfield[p] = MINO_COLOR.at(game.active_tetrimino.type);
         game.active_tetrimino = game.bag.pop();
+
+        extended_placement_active = false;
       }
-      else
-      {
-        game.active_tetrimino.fall(game.playfield);
-      }
-      last_drop = tick_start;
     }
 
     // Delay until next tick
