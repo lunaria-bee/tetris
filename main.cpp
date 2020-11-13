@@ -87,8 +87,6 @@ int main()
       {
         game.active_tetrimino.fall(game.playfield);
       }
-      logfile << std::chrono::duration_cast<std::chrono::milliseconds>(tick_start - last_drop).count()
-              << std::endl;
       last_drop = tick_start;
     }
 
