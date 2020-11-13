@@ -243,7 +243,7 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
   }
 
   Tetrimino landing = *this;
-
+  landing.translate(Point(distance_to_landing, 0), playfield);
   return landing;
 }
 
