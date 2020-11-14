@@ -76,7 +76,7 @@ int main()
     auto result = INPUT_MAP.find(getch());
     if (result != INPUT_MAP.end())
     {
-      if (!extended_placement_active || extended_placement_moves <= extended_placement_max_moves)
+      if (!extended_placement_active || extended_placement_moves <= EXTENDED_PLACEMENT_MAX_MOVES)
       {
         Command command = result->second;
         bool command_success = game.try_command(result->second);
@@ -116,7 +116,7 @@ int main()
         extended_placement_active = true;
       }
 
-      if (hard_drop || tick_start > extended_placement_start + extended_placement_max_time)
+      if (hard_drop || tick_start > extended_placement_start + EXTENDED_PLACEMENT_MAX_TIME)
       {
         // Lock active tetrimino
         for (const Point& p : game.active_tetrimino.points)
@@ -137,8 +137,8 @@ int main()
     // Delay until next tick
     tick_end = std::chrono::steady_clock::now();
     std::chrono::duration<float> work_time = tick_end - tick_start;
-    if (work_time < tick_duration)
-      std::this_thread::sleep_for(tick_duration - work_time);
+    if (work_time < TICK_DURATION)
+      std::this_thread::sleep_for(TICK_DURATION - work_time);
   }
 
   // Close ncurses window and exit

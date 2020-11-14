@@ -199,13 +199,13 @@ Point calculate_srs_offset(short point_index,
 
 
 /* Length of each game tick. */
-const std::chrono::duration<float> tick_duration(1.0/60.0);
+const std::chrono::duration<float> TICK_DURATION(1.0/60.0);
 
 /* Maximum number of moves permitted in extended placement mode. */
-const short extended_placement_max_moves = 15;
+const short EXTENDED_PLACEMENT_MAX_MOVES = 15;
 
 /* Extended placement timer duration. */
-const std::chrono::duration<float> extended_placement_max_time(0.5);
+const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
 /* Values used to calculate SRS offsets. */
 // TODO fill in values
