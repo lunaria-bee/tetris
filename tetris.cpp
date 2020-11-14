@@ -286,7 +286,7 @@ bool Game::try_command(Command command)
       break;
 
     case Command::SHIFT_RIGHT:
-      active_tetrimino.shift_right(Point(0, 1), playfield);
+      active_tetrimino.translate(Point(0, 1), playfield);
       break;
 
     case Command::ROTATE_CCW:

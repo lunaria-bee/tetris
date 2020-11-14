@@ -100,7 +100,7 @@ int main()
     // Process drop
     if (tick_start - last_drop >= game.get_drop_interval())
     {
-      bool fell = game.active_tetrimino.fall(game.playfield);
+      bool fell = game.active_tetrimino.translate(Point(1, 0), game.playfield);
       if (fell && extended_placement_active)
         extended_placement_active = false;
       last_drop = tick_start;
