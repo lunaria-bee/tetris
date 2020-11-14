@@ -65,8 +65,9 @@ int main()
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
   bool hard_drop = false;
+  bool game_over = false;
 
-  while (true)
+  while (!game_over)
   {
     tick_start = std::chrono::steady_clock::now();
 
@@ -127,6 +128,11 @@ int main()
 
         // Draw new tetrinimo
         game.active_tetrimino = game.bag.pop();
+        for (const Point& p : game.active_tetrimino.points)
+        {
+          if (check_collision(p, game.playfield))
+              game_over = true;
+        }
 
         // Reset placement control
         extended_placement_active = false;
