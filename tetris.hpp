@@ -85,14 +85,10 @@ struct Tetrimino
   TetriminoFacing facing;
 
   Tetrimino(TetriminoType type_init);
-
   bool translate(const Point& delta, const Playfield& playfield);
-  bool fall(const Playfield& playfield);
-  bool hard_drop(const Playfield& playfield);
-  bool shift_left(const Playfield& playfield);
-  bool shift_right(const Playfield& playfield);
   bool rotate_ccw(const Playfield& playfield);
   bool rotate_cw(const Playfield& playfield);
+  bool hard_drop(const Playfield& playfield);
   bool is_landed(const Playfield& playfield) const;
   Tetrimino get_landing(const Playfield& playfield) const;
 };

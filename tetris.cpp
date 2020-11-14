@@ -143,27 +143,6 @@ bool Tetrimino::translate(const Point& delta, const Playfield& playfield)
   return true;
 }
 
-bool Tetrimino::fall(const Playfield& playfield)
-{
-  return translate(Point(1, 0), playfield);
-}
-
-bool Tetrimino::hard_drop(const Playfield& playfield)
-{
-  short fall_distance = get_landing(playfield).pivot.row - pivot.row;
-  return translate(Point(fall_distance, 0), playfield);
-}
-
-bool Tetrimino::shift_left(const Playfield& playfield)
-{
-  return translate(Point(0, -1), playfield);
-}
-
-bool Tetrimino::shift_right(const Playfield& playfield)
-{
-  return translate(Point(0, 1), playfield);
-}
-
 bool Tetrimino::rotate_ccw(const Playfield& playfield)
 {
   if (type == TetriminoType::O)
@@ -202,6 +181,12 @@ bool Tetrimino::rotate_cw(const Playfield& playfield)
 
   points = new_points;
   return true;
+}
+
+bool Tetrimino::hard_drop(const Playfield& playfield)
+{
+  short fall_distance = get_landing(playfield).pivot.row - pivot.row;
+  return translate(Point(fall_distance, 0), playfield);
 }
 
 bool Tetrimino::is_landed(const Playfield& playfield) const
@@ -282,11 +267,11 @@ bool Game::try_command(Command command)
       break;
 
     case Command::SHIFT_LEFT:
-      active_tetrimino.shift_left(playfield);
+      active_tetrimino.translate(Point(0, -1), playfield);
       break;
 
     case Command::SHIFT_RIGHT:
-      active_tetrimino.shift_right(playfield);
+      active_tetrimino.shift_right(Point(0, 1), playfield);
       break;
 
     case Command::ROTATE_CCW:
@@ -298,7 +283,7 @@ bool Game::try_command(Command command)
       break;
 
     case Command::SOFT_DROP:
-      active_tetrimino.fall(playfield);
+      active_tetrimino.translate(Point(1, 0), playfield);
       break;
 
     case Command::HARD_DROP:
