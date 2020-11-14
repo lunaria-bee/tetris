@@ -6,6 +6,9 @@
 #include <random>
 
 
+using namespace tetris;
+
+
 /* Point Class Methods */
 
 Point Point::operator+(const Point& right_op) const
@@ -35,22 +38,22 @@ Point& Point::operator-=(const Point& right_op)
 
 /* Playfield Class Methods */
 
-std::array<short, 10>& Playfield::operator[](short index)
+std::array<TetriminoType, 10>& Playfield::operator[](short index)
 {
   return grid[index];
 }
 
-const std::array<short, 10>& Playfield::operator[](short index) const
+const std::array<TetriminoType, 10>& Playfield::operator[](short index) const
 {
   return grid[index];
 }
 
-short& Playfield::operator[](const Point& point)
+TetriminoType& Playfield::operator[](const Point& point)
 {
   return grid[point.row][point.col];
 }
 
-short Playfield::operator[](const Point& point) const
+TetriminoType Playfield::operator[](const Point& point) const
 {
   return grid[point.row][point.col];
 }
@@ -217,7 +220,8 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
   {
     for (const Point& p : points)
     {
-      if (playfield[row][p.col] && (row - p.row - 1 < distance_to_landing) && (row - p.row - 1 >= 0))
+      if (playfield[row][p.col] != TetriminoType::NONE
+          && (row - p.row - 1 < distance_to_landing) && (row - p.row - 1 >= 0))
         distance_to_landing = row - p.row - 1;
     }
   }
@@ -309,6 +313,12 @@ bool Game::try_command(Command command)
   return true;
 }
 
+void Game::lock_active_tetrimino()
+{
+  for (const Point& p : active_tetrimino.points)
+    playfield[p] = active_tetrimino.type;
+}
+
 void Game::clear_rows()
 {
   for (int row=39; row>0; row--)
@@ -317,7 +327,7 @@ void Game::clear_rows()
     bool row_full(true);
     for (short col=0; col<10; col++)
     {
-      if (!playfield[row][col])
+      if (playfield[row][col] == TetriminoType::NONE)
       {
         row_full = false;
         break;
@@ -332,9 +342,27 @@ void Game::clear_rows()
         for (int colc=0; colc<10; colc++)
           playfield[rowc][colc] = playfield[rowc-1][colc];
       }
-      row++;
+
+      // Since the previously above row has been moved into the current row, that row
+      // would be skipped were row allowed to decrement in the next iteration, so
+      // increment row to counteract.
+      ++row;
     }
   }
+}
+
+void Game::draw_new_tetrimino()
+{
+  active_tetrimino = bag.pop();
+}
+
+bool Game::is_game_over()
+{
+  for (const Point& p : active_tetrimino.points)
+    if (check_collision(p, playfield))
+      return true;
+
+  return false;
 }
 
 std::chrono::duration<float> Game::get_drop_interval()
@@ -345,7 +373,7 @@ std::chrono::duration<float> Game::get_drop_interval()
 
 /* Free Functions */
 
-short check_collision(const Point& point, const Playfield& playfield)
+short tetris::check_collision(const Point& point, const Playfield& playfield)
 {
   short result = CollisionResult::NONE;
 
@@ -355,13 +383,13 @@ short check_collision(const Point& point, const Playfield& playfield)
   if (point.col < 0 || point.col > 9)
     result |= CollisionResult::WALL;
 
-  if (playfield[point.row][point.col])
+  if (playfield[point.row][point.col] != TetriminoType::NONE)
     result |= CollisionResult::MINO;
 
   return result;
 }
 
-Point calculate_srs_offset(short point_index,
+Point tetris::calculate_srs_offset(short point_index,
                            TetriminoType type,
                            TetriminoFacing facing_before,
                            TetriminoFacing facing_after)

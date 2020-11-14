@@ -10,83 +10,57 @@
 
 std::ofstream tetris_log::out;
 
-const std::map<int, Command> INPUT_MAP{
-  {ERR, Command::DO_NOTHING},
-  {'h', Command::SHIFT_LEFT},
-  {'l', Command::SHIFT_RIGHT},
-  {'j', Command::ROTATE_CCW},
-  {'k', Command::ROTATE_CW},
-  {'n', Command::SOFT_DROP},
-  {' ', Command::HARD_DROP},
+const std::map<int, tetris::Command> INPUT_MAP{
+  {ERR, tetris::Command::DO_NOTHING},
+  {'h', tetris::Command::SHIFT_LEFT},
+  {'l', tetris::Command::SHIFT_RIGHT},
+  {'j', tetris::Command::ROTATE_CCW},
+  {'k', tetris::Command::ROTATE_CW},
+  {'n', tetris::Command::SOFT_DROP},
+  {' ', tetris::Command::HARD_DROP},
 };
 
 int main()
 {
   tetris_log::out.open("tetris.log");
 
-  // Initialize ncurses
-  initscr();
-  curs_set(0);
-  cbreak();
-  noecho();
-  nodelay(stdscr, true);
-  keypad(stdscr, true);
-  setlocale(LC_ALL, "");
-
-  // Initialize colors, with tetromino types as keys
-  start_color();
-  use_default_colors();
-  init_pair(MINO_COLOR.at(TetriminoType::O), COLOR_WHITE, COLOR_WHITE);
-  init_pair(MINO_COLOR.at(TetriminoType::I), COLOR_CYAN, COLOR_CYAN);
-  init_pair(MINO_COLOR.at(TetriminoType::T), COLOR_MAGENTA, COLOR_MAGENTA);
-  init_pair(MINO_COLOR.at(TetriminoType::L), COLOR_YELLOW, COLOR_YELLOW);
-  init_pair(MINO_COLOR.at(TetriminoType::J), COLOR_BLUE, COLOR_BLUE);
-  init_pair(MINO_COLOR.at(TetriminoType::S), COLOR_GREEN, COLOR_GREEN);
-  init_pair(MINO_COLOR.at(TetriminoType::Z), COLOR_RED, COLOR_RED);
-  init_pair(GHOST_COLOR.at(TetriminoType::O), COLOR_WHITE, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::I), COLOR_CYAN, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::T), COLOR_MAGENTA, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::L), COLOR_YELLOW, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::J), COLOR_BLUE, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::S), COLOR_GREEN, 0);
-  init_pair(GHOST_COLOR.at(TetriminoType::Z), COLOR_RED, 0);
-
-  draw_playbox();
-  refresh();
-  getch();
+  tetris_ui::init_ui();
 
   // Set up game
-  Game game;
-  game.active_tetrimino = game.bag.pop();
-  std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
+  tetris::Game game;
+  game.draw_new_tetrimino();
+
+  // Set up placement control
   bool extended_placement_active = false;
-  short extended_placement_moves;
   std::chrono::steady_clock::time_point extended_placement_start;
+  short extended_placement_moves;
+  bool hard_drop = false;
+
+  // Set up time control
+  std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
-  bool hard_drop = false;
-  bool game_over = false;
 
-  while (!game_over)
+  while (!game.is_game_over())
   {
     tick_start = std::chrono::steady_clock::now();
 
-    redraw_playfield(game.playfield, game.active_tetrimino);
+    tetris_ui::redraw_playfield(game.playfield, game.active_tetrimino);
 
     // Process input
     auto result = INPUT_MAP.find(getch());
     if (result != INPUT_MAP.end())
     {
-      if (!extended_placement_active || extended_placement_moves <= EXTENDED_PLACEMENT_MAX_MOVES)
+      if (!extended_placement_active || extended_placement_moves <= tetris::EXTENDED_PLACEMENT_MAX_MOVES)
       {
-        Command command = result->second;
+        tetris::Command command = result->second;
         bool command_success = game.try_command(result->second);
         if (command_success)
         {
-          if (command == Command::SOFT_DROP)
+          if (command == tetris::Command::SOFT_DROP)
             last_drop = tick_start;
 
-          if (command == Command::HARD_DROP)
+          if (command == tetris::Command::HARD_DROP)
             hard_drop = true;
 
           if (extended_placement_active)
@@ -101,7 +75,7 @@ int main()
     // Process drop
     if (tick_start - last_drop >= game.get_drop_interval())
     {
-      bool fell = game.active_tetrimino.translate(Point(1, 0), game.playfield);
+      bool fell = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
       if (fell && extended_placement_active)
         extended_placement_active = false;
       last_drop = tick_start;
@@ -110,6 +84,7 @@ int main()
     // Check for mino landing
     if (game.active_tetrimino.is_landed(game.playfield))
     {
+      // Initialize extended placement mode
       if (!extended_placement_active)
       {
         extended_placement_start = tick_start;
@@ -117,22 +92,12 @@ int main()
         extended_placement_active = true;
       }
 
-      if (hard_drop || tick_start > extended_placement_start + EXTENDED_PLACEMENT_MAX_TIME)
+      // If tetrimino may no longer be manipulated
+      if (hard_drop || tick_start > extended_placement_start + tetris::EXTENDED_PLACEMENT_MAX_TIME)
       {
-        // Lock active tetrimino
-        for (const Point& p : game.active_tetrimino.points)
-          game.playfield[p] = MINO_COLOR.at(game.active_tetrimino.type);
-
-        // Check for complete rows
+        game.lock_active_tetrimino();
         game.clear_rows();
-
-        // Draw new tetrinimo
-        game.active_tetrimino = game.bag.pop();
-        for (const Point& p : game.active_tetrimino.points)
-        {
-          if (check_collision(p, game.playfield))
-              game_over = true;
-        }
+        game.draw_new_tetrimino();
 
         // Reset placement control
         extended_placement_active = false;
@@ -143,8 +108,8 @@ int main()
     // Delay until next tick
     tick_end = std::chrono::steady_clock::now();
     std::chrono::duration<float> work_time = tick_end - tick_start;
-    if (work_time < TICK_DURATION)
-      std::this_thread::sleep_for(TICK_DURATION - work_time);
+    if (work_time < tetris::TICK_DURATION)
+      std::this_thread::sleep_for(tetris::TICK_DURATION - work_time);
   }
 
   // Close ncurses window and exit
