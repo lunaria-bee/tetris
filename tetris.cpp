@@ -5,6 +5,9 @@
 #include <cmath>
 #include <random>
 
+
+/* Point Class Methods */
+
 Point Point::operator+(const Point& right_op) const
 {
   return Point(this->row + right_op.row, this->col + right_op.col);
@@ -29,6 +32,9 @@ Point& Point::operator-=(const Point& right_op)
   return *this;
 }
 
+
+/* Playfield Class Methods */
+
 std::array<short, 10>& Playfield::operator[](short index)
 {
   return grid[index];
@@ -48,6 +54,9 @@ short Playfield::operator[](const Point& point) const
 {
   return grid[point.row][point.col];
 }
+
+
+/* Tetrimino Class Methods */
 
 Tetrimino::Tetrimino(TetriminoType type_init)
   : type(type_init),
@@ -224,6 +233,9 @@ Tetrimino Tetrimino::get_landing(const Playfield& playfield) const
   return landing;
 }
 
+
+/* Bag Class Methods */
+
 Bag::Bag()
 {
   std::random_device rd;
@@ -258,6 +270,9 @@ void Bag::extend_queue()
   for (Tetrimino t : tetriminos)
     tetrimino_queue.push(t);
 }
+
+
+/* Game Class Methods */
 
 bool Game::try_command(Command command)
 {
@@ -326,6 +341,9 @@ std::chrono::duration<float> Game::get_drop_interval()
 {
   return std::chrono::duration<float>(pow(0.8 - ((level-1) * 0.0007), level-1));
 }
+
+
+/* Free Functions */
 
 short check_collision(const Point& point, const Playfield& playfield)
 {

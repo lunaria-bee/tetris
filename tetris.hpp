@@ -7,6 +7,7 @@
 #include <random>
 #include <queue>
 
+/* Enum to identify the type/shape of a tetrimino. */
 enum class TetriminoType
 {
   O,
@@ -18,6 +19,7 @@ enum class TetriminoType
   Z,
 };
 
+/* Enum to identify the facing of a tetrimino. */
 enum class TetriminoFacing
 {
   NORTH,
@@ -26,6 +28,7 @@ enum class TetriminoFacing
   WEST,
 };
 
+/* Enum to identify user game commands. */
 enum class Command
 {
   DO_NOTHING,
@@ -37,6 +40,7 @@ enum class Command
   HARD_DROP,
 };
 
+/* Bitmask to identify results of collision tests. */
 namespace CollisionResult
 {
   const short NONE  = 0;
@@ -45,6 +49,7 @@ namespace CollisionResult
   const short MINO  = 1<<2;
 }
 
+/* Two-dimensional point on the playfield. */
 struct Point
 {
   short row, col;
@@ -65,6 +70,12 @@ struct Point
   Point& operator-=(const Point& right_op);
 };
 
+/* Grid in which the tetriminos fall.
+ *
+ * The state of a cell in the grid is represented by a short. A value of 0 indicates an
+ * empty cell. Any other value indicates that a mino has been locked in the cell, with the
+ * value corresponding to the type of tetrimino the locked mino was originally part of.
+ */
 struct Playfield
 {
   std::array<std::array<short, 10>, 40> grid{0};
@@ -77,6 +88,7 @@ struct Playfield
   short operator[](const Point& point) const;
 };
 
+/* Tetris game piece. */
 struct Tetrimino
 {
   TetriminoType type;
@@ -85,14 +97,55 @@ struct Tetrimino
   TetriminoFacing facing;
 
   Tetrimino(TetriminoType type_init);
+
+  /* Translate a tetrimino by delta, if possible.
+   *
+   * Does not translate if a collision would result.
+   *
+   * delta: Offsets for translation.
+   * playfield: Playfield on which translation will occur.
+   * return: Whether translation was successful.
+   */
   bool translate(const Point& delta, const Playfield& playfield);
+
+  /* Rotate a tetrimino counter-clockwise, if possible.
+   *
+   * Does not rotate if a collision would result.
+   *
+   * playfield: Playfield on which translation will occur.
+   * return: Whether rotation was successful.
+   */
   bool rotate_ccw(const Playfield& playfield);
+
+  /* Rotate a tetrimino clockwise, if possible.
+   *
+   * Does not rotate if a collision would result.
+   *
+   * playfield: Playfield on which translation will occur.
+   * return: Whether rotation was successful.
+   */
   bool rotate_cw(const Playfield& playfield);
+
+  /* Drop tetrimino as far as possible.
+   *
+   * playfield: Playfield on which tranlsation will occur.
+   * return: Whether translation was successful.
+   */
   bool hard_drop(const Playfield& playfield);
+
+  /* Check whether tetrimino has fallen as far as it can. */
   bool is_landed(const Playfield& playfield) const;
+
+  /* Get the eventual landing point for a tetrimino, assuming it falls on its current
+   * path.
+   *
+   * playfield: Playfield on which the tetrimino is falling.
+   * return: Tetrimino with the state this one will have once it lands.
+   */
   Tetrimino get_landing(const Playfield& playfield) const;
 };
 
+/* Semi-random generator for tetriminoes. */
 struct Bag
 {
   std::queue<Tetrimino> tetrimino_queue;
@@ -100,10 +153,17 @@ struct Bag
 
   Bag();
 
+  /* Remove a tetrimino from the end of the queue and return it.
+   *
+   * Will automatically extend the queue if no tetriminoes are available.
+   */
   Tetrimino pop();
+
+  /* Extend the queue with another set of seven tetriminoes. */
   void extend_queue();
 };
 
+/* Storage and control for game state. */
 struct Game
 {
   Playfield playfield;
@@ -111,29 +171,43 @@ struct Game
   Tetrimino active_tetrimino{TetriminoType::I};
   short level = 1;
 
+  /* Execute a command, if possible.
+   *
+   * command: Command to try.
+   * return: Success or failure.
+   * */
   bool try_command(Command command);
+
+  /* Clear all full rows from the playfield. */
   void clear_rows();
+
+  /* Get the drop interval based on the current level. */
   std::chrono::duration<float> get_drop_interval();
 };
 
+/* Check whether a point collides with any objects on the playfield. */
 short check_collision(const Point& point, const Playfield& playfield);
 
+/* Determine how to translate a tetrimino following a rotation.
+ *
+ * Calculations are made in accordance with the super rotation system.
+ */
 Point calculate_srs_offset(short point_index,
                            TetriminoType type,
                            TetriminoFacing facing_before,
                            TetriminoFacing facing_after);
 
 
-/* Length of each game tick */
+/* Length of each game tick. */
 const std::chrono::duration<float> tick_duration(1.0/60.0);
 
-/* Maximum number of moves permitted in extended placement mode */
+/* Maximum number of moves permitted in extended placement mode. */
 const short extended_placement_max_moves = 15;
 
-/* Extended placement timer duration */
+/* Extended placement timer duration. */
 const std::chrono::duration<float> extended_placement_max_time(0.5);
 
-//! 
+/* Values used to calculate SRS offsets. */
 // TODO fill in values
 const std::map<TetriminoType, std::map<TetriminoFacing, std::array<Point, 4>>> SRS_OFFSET_VALUES{
   {TetriminoType::I, {

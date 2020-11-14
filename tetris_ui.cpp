@@ -6,6 +6,7 @@
 #include <fstream>
 #include <thread>
 
+
 Point playfield_point_to_draw_window_point(const Point& point)
 {
   return Point(1+point.row-19, 1+point.col*2);
