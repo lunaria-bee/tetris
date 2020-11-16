@@ -8,6 +8,8 @@
 #include <map>
 #include <thread>
 
+bool gravity=trie; // TODO set from command line / config file
+
 std::ofstream tetris_log::out;
 
 const std::map<int, tetris::Command> INPUT_MAP{
@@ -51,7 +53,9 @@ int main()
     auto result = INPUT_MAP.find(getch());
     if (result != INPUT_MAP.end())
     {
-      if (!extended_placement_active || extended_placement_moves <= tetris::EXTENDED_PLACEMENT_MAX_MOVES)
+      if (!gravity
+          || !extended_placement_active
+          || extended_placement_moves <= tetris::EXTENDED_PLACEMENT_MAX_MOVES)
       {
         tetris::Command command = result->second;
         bool command_success = game.try_command(result->second);
@@ -73,12 +77,15 @@ int main()
     }
 
     // Process drop
-    if (tick_start - last_drop >= game.get_drop_interval())
+    if (gravity)
     {
-      bool fell = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
-      if (fell && extended_placement_active)
-        extended_placement_active = false;
-      last_drop = tick_start;
+      if (tick_start - last_drop >= game.get_drop_interval())
+      {
+        bool fell = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
+        if (fell && extended_placement_active)
+          extended_placement_active = false;
+        last_drop = tick_start;
+      }
     }
 
     // Check for mino landing
@@ -93,7 +100,8 @@ int main()
       }
 
       // If tetrimino may no longer be manipulated
-      if (hard_drop || tick_start > extended_placement_start + tetris::EXTENDED_PLACEMENT_MAX_TIME)
+      if (hard_drop
+          || gravity && tick_start > extended_placement_start + tetris::EXTENDED_PLACEMENT_MAX_TIME)
       {
         game.lock_active_tetrimino();
         game.clear_rows();
