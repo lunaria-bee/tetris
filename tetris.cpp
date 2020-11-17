@@ -5,7 +5,7 @@
 #include <chrono>
 #include <cmath>
 #include <random>
-// #include <stdexcept>
+#include <stdexcept>
 
 
 using namespace tetris;
@@ -558,8 +558,7 @@ Point tetris::get_srs_offset_value(TetriminoType type, TetriminoFacing facing, s
       break;
 
     default:
-      // throw std::invalid_argument("Invalid tetrimino type for SRS");
-      return Point(0, 0);
+      throw std::invalid_argument("Invalid tetrimino type for SRS");
       break;
   }
 }
