@@ -1,5 +1,5 @@
 # tetris
-C++ implementation of tetris that runs in terminal. Very unfinished, many expected features will be missing.
+Terminal tetris using ncurses. Very unfinished, many expected features will be missing.
 
 ## Building
 1. Ensure [ncurses developer libraries](https://ostechnix.com/how-to-install-ncurses-library-in-linux/) are installed.
