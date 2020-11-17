@@ -8,7 +8,7 @@
 #include <map>
 #include <thread>
 
-bool gravity=trie; // TODO set from command line / config file
+bool gravity=true; // TODO set from command line / config file
 
 std::ofstream tetris_log::out;
 
