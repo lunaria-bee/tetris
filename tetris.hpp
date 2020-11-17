@@ -199,6 +199,18 @@ namespace tetris
 
   /* Check whether a point collides with any objects on the playfield. */
   short check_collision(const Point& point, const Playfield& playfield);
+  short check_collision(const std::array<Point, 4>& points, const Playfield& playfield);
+
+  /* TODO */
+  bool process_srs(TetriminoType type,
+                   const std::array<Point, 4>& points,
+                   const Playfield playfield,
+                   TetriminoFacing facing_before,
+                   TetriminoFacing facing_after,
+                   Point& offset);
+
+  /* TODO */
+  Point get_srs_offset_value(TetriminoType type, TetriminoFacing facing, short index);
 
   /* Determine how to translate a tetrimino following a rotation.
    *
@@ -219,45 +231,18 @@ namespace tetris
   /* Extended placement timer duration. */
   const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
-  /* Values used to calculate SRS offsets. */
-  // TODO fill in values
-  const std::map<TetriminoType, std::map<TetriminoFacing, std::array<Point, 4>>> SRS_OFFSET_VALUES{
-    {TetriminoType::I, {
-        {TetriminoFacing::NORTH, {Point(0, -1), Point(0, 2), Point(0, -1), Point(0, 2)}},
-        {TetriminoFacing::EAST, {Point(0, 1), Point(0, 1), Point(-1, 1), Point(2, 1)}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST, {}},
-      }},
-    {TetriminoType::T, {
-        {TetriminoFacing::NORTH, {}},
-        {TetriminoFacing::EAST,  {}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST,  {}},
-      }},
-    {TetriminoType::L, {
-        {TetriminoFacing::NORTH, {}},
-        {TetriminoFacing::EAST,  {}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST,  {}},
-      }},
-    {TetriminoType::J, {
-        {TetriminoFacing::NORTH, {}},
-        {TetriminoFacing::EAST,  {}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST,  {}},
-      }},
-    {TetriminoType::S, {
-        {TetriminoFacing::NORTH, {}},
-        {TetriminoFacing::EAST,  {}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST,  {}},
-      }},
-    {TetriminoType::Z, {
-        {TetriminoFacing::NORTH, {}},
-        {TetriminoFacing::EAST,  {}},
-        {TetriminoFacing::SOUTH, {}},
-        {TetriminoFacing::WEST,  {}},
-      }},
+  const std::map<TetriminoFacing, std::array<Point, 4>> STANDARD_SRS_OFFSET_VALUES{
+    {TetriminoFacing::NORTH, {Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0)}},
+    {TetriminoFacing::EAST,  {Point(0, 1), Point(1, 1), Point(-2, 0), Point(-2, 1)}},
+    {TetriminoFacing::SOUTH, {Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0)}},
+    {TetriminoFacing::WEST,  {Point(0, -1), Point(1, -1), Point(-2, 0), Point(-2, -1)}},
+  };
+
+  const std::map<TetriminoFacing, std::array<Point, 4>> I_SRS_OFFSET_VALUES{
+    {TetriminoFacing::NORTH, {Point(0, -1), Point(0, 2), Point(0, -1), Point(0, 2)}},
+    {TetriminoFacing::EAST, {Point(0, 1), Point(0, 1), Point(-1, 1), Point(2, 1)}},
+    {TetriminoFacing::SOUTH, {Point(0, 2), Point(0, -1), Point(1, 2), Point(1, -1)}},
+    {TetriminoFacing::WEST, {Point(0, 0), Point(0, 0), Point(2, 0), Point(-1, 0)}},
   };
 }
 
