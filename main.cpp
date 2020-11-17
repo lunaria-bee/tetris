@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <thread>
 
@@ -149,5 +150,7 @@ int main()
 
   // Close ncurses window and exit
   endwin();
+  std::cout << "Game over!" << std::endl;
+  std::cout << "Score: " << game.score << std::endl;
   return 0;
 }
