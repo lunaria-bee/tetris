@@ -173,6 +173,13 @@ namespace tetris
     Bag bag;
     Tetrimino active_tetrimino{TetriminoType::I};
     short level = 1;
+    short row_clears_to_next_level = level * 5; // TODO calculate row clears by variable goal system
+    short max_level = 15;
+    long score = 0; // typed for optimism
+    // TODO score T-spins
+    // TODO score hard drop
+    // TODO score soft drop
+    // TODO score back-to-back bonus
 
     /* Execute a command, if possible.
      *
@@ -230,6 +237,10 @@ namespace tetris
 
   /* Extended placement timer duration. */
   const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
+
+  /* Multiplied by level to increase score based on number of rows cleared at once */
+  const std::map<short, short> row_clear_multipliers{
+    {1, 100}, {2, 300}, {3, 500}, {4, 800}};
 
   const std::map<TetriminoFacing, std::array<Point, 4>> STANDARD_SRS_OFFSET_VALUES{
     {TetriminoFacing::NORTH, {Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0)}},

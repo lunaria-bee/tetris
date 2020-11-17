@@ -124,3 +124,9 @@ void tetris_ui::redraw_playfield(const tetris::Playfield& playfield, const tetri
   }
   attroff(COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
 }
+
+void tetris_ui::redraw_score(long score, short level)
+{
+  mvprintw(1, 25, "Score: %ld", score);
+  mvprintw(2, 25, "Level: %hd", level);
+}

@@ -405,7 +405,9 @@ void Game::lock_active_tetrimino()
 
 void Game::clear_rows()
 {
-  for (int row=39; row>0; row--)
+  short rows_cleared = 0;
+
+  for (short row=39; row>0; row--)
   {
     // Check if row is full
     bool row_full(true);
@@ -421,9 +423,11 @@ void Game::clear_rows()
     // If row is full, clear it and lower upper rows
     if (row_full)
     {
-      for (int rowc=row; rowc>0; rowc--)
+      ++rows_cleared;
+
+      for (short rowc=row; rowc>0; rowc--)
       {
-        for (int colc=0; colc<10; colc++)
+        for (short colc=0; colc<10; colc++)
           playfield[rowc][colc] = playfield[rowc-1][colc];
       }
 
@@ -431,6 +435,21 @@ void Game::clear_rows()
       // would be skipped were row allowed to decrement in the next iteration, so
       // increment row to counteract.
       ++row;
+    }
+  }
+
+  // Add points from row clears
+  if (rows_cleared)
+    score += level * row_clear_multipliers.at(rows_cleared);
+
+  // Level up if appropriate
+  if (level < max_level)
+  {
+    row_clears_to_next_level -= rows_cleared;
+    if (row_clears_to_next_level <= 0)
+    {
+      ++level;
+      row_clears_to_next_level = level * 5 + row_clears_to_next_level;
     }
   }
 }
@@ -442,7 +461,6 @@ void Game::draw_new_tetrimino()
 
 bool Game::is_game_over()
 {
-  return false; // TODO-DELETE TESTING
   for (const Point& p : active_tetrimino.points)
     if (check_collision(p, playfield))
       return true;
@@ -452,7 +470,7 @@ bool Game::is_game_over()
 
 std::chrono::duration<float> Game::get_drop_interval()
 {
-  return std::chrono::duration<float>(pow(0.8 - ((level-1) * 0.0007), level-1));
+  return std::chrono::duration<float>(pow(0.8 - ((level-1) * 0.007), level-1));
 }
 
 

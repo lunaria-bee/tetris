@@ -48,6 +48,7 @@ int main()
     tick_start = std::chrono::steady_clock::now();
 
     tetris_ui::redraw_playfield(game.playfield, game.active_tetrimino);
+    tetris_ui::redraw_score(game.score, game.level);
 
     // Process input
     auto result = INPUT_MAP.find(getch());

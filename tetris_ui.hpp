@@ -17,6 +17,9 @@ namespace tetris_ui
   /* Redraw the playfield and then the active tetrimino over it */
   void redraw_playfield(const tetris::Playfield& playfield, const tetris::Tetrimino& active_tetrimino);
 
+  /* Redraw the player's current score and level */
+  void redraw_score(long score, short level);
+
   /* Map of (tetrimino type -> ncurses color code) for active and locked minoes */
   const std::map<tetris::TetriminoType, short> MINO_COLOR{
     {tetris::TetriminoType::O, 1},
