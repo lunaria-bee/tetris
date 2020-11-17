@@ -157,6 +157,7 @@ bool Tetrimino::translate(const Point& delta, const Playfield& playfield)
   return true;
 }
 
+// TODO refactor rotation functions
 bool Tetrimino::rotate_ccw(const Playfield& playfield)
 {
   if (type == TetriminoType::O)
@@ -218,6 +219,7 @@ bool Tetrimino::rotate_ccw(const Playfield& playfield)
   return clear;
 }
 
+// TODO refactor rotation functions
 bool Tetrimino::rotate_cw(const Playfield& playfield)
 {
   if (type == TetriminoType::O)
