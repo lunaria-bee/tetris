@@ -216,8 +216,17 @@ namespace tetris
                    TetriminoFacing facing_after,
                    Point& offset);
 
-  /* TODO */
-  Point get_srs_offset_value(TetriminoType type, TetriminoFacing facing, short index);
+  /* Get a value to use in an SRS offset calculation.
+   *
+   * type[in]: Type of the rotated tetrimino.
+   * facing[in]: Facing of the value to obtain.
+   * point_index[in]: Which SRS point to return (0-3). 0 corresponds to the second SRS
+   *                  point, 3 to the fifth SRS point. The first SRS point is ommitted, as
+   *                  it is always (0, 0).
+   *
+   * return: Relevant SRS offset value.
+   */
+  Point get_srs_offset_value(TetriminoType type, TetriminoFacing facing, short point_index);
 
   /* Determine how to translate a tetrimino following a rotation.
    *
@@ -242,6 +251,7 @@ namespace tetris
   const std::map<short, short> row_clear_multipliers{
     {1, 100}, {2, 300}, {3, 500}, {4, 800}};
 
+  /* SRS offset values for all tetriminoes other than I and O tetriminoes. */
   const std::map<TetriminoFacing, std::array<Point, 4>> STANDARD_SRS_OFFSET_VALUES{
     {TetriminoFacing::NORTH, {Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0)}},
     {TetriminoFacing::EAST,  {Point(0, 1), Point(1, 1), Point(-2, 0), Point(-2, 1)}},
@@ -249,12 +259,16 @@ namespace tetris
     {TetriminoFacing::WEST,  {Point(0, -1), Point(1, -1), Point(-2, 0), Point(-2, -1)}},
   };
 
+  /* SRS offset values for I tetriminoes. */
   const std::map<TetriminoFacing, std::array<Point, 4>> I_SRS_OFFSET_VALUES{
     {TetriminoFacing::NORTH, {Point(0, -1), Point(0, 2), Point(0, -1), Point(0, 2)}},
     {TetriminoFacing::EAST, {Point(0, 1), Point(0, 1), Point(-1, 1), Point(2, 1)}},
     {TetriminoFacing::SOUTH, {Point(0, 2), Point(0, -1), Point(1, 2), Point(1, -1)}},
     {TetriminoFacing::WEST, {Point(0, 0), Point(0, 0), Point(2, 0), Point(-1, 0)}},
   };
+
+  // Note that rotation has no effect on O tetriminoes, and as such they do not need SRS
+  // values.
 }
 
 #endif
