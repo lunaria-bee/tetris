@@ -8,7 +8,7 @@ namespace tetris_ui
   /* Convert a Point from playfield coordinates to draw window coordinates */
   tetris::Point playfield_point_to_draw_window_point(const tetris::Point& point);
 
-  /* TODO */
+  /* Initialize the ncurses UI */
   void init_ui();
 
   /* Draw an outline around the playfield */

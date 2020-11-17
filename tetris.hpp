@@ -188,16 +188,19 @@ namespace tetris
      * */
     bool try_command(Command command);
 
-    /* TODO */
+    /* Write the active tetrimino's minoes to the static playfield */
     void lock_active_tetrimino();
 
     /* Clear all full rows from the playfield. */
     void clear_rows();
 
-    /* TODO */
+    /* Pop a new tetrimino from the bag and make it the active tetrimino. */
     void draw_new_tetrimino();
 
-    /* TODO */
+    /* Check for a game over state.
+     *
+     * return: Whether a game over state has been reached.
+     */
     bool is_game_over();
 
     /* Get the drop interval based on the current level. */
@@ -208,7 +211,17 @@ namespace tetris
   short check_collision(const Point& point, const Playfield& playfield);
   short check_collision(const std::array<Point, 4>& points, const Playfield& playfield);
 
-  /* TODO */
+  /* Calculate the SRS offset for a rotation
+   *
+   * type[in]: Type of the rotated tetrimino.
+   * points[in]: Location of the tetrimino's minoes.
+   * playfield[in]: Playfield the tetrimino occupies.
+   * facing_before[in]: Tetrimino's facing before the rotation.
+   * facing_after[in]: Tetrimino's facing after the rotation.
+   * offset[out]: Calculated SRS offset.
+   *
+   * return: Whether a usable SRS offset was found for the rotation.
+   */
   bool process_srs(TetriminoType type,
                    const std::array<Point, 4>& points,
                    const Playfield playfield,
