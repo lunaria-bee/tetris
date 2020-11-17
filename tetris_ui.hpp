@@ -7,6 +7,18 @@ namespace tetris
 {
   namespace ui
   {
+    /* Enum to identify user game commands. */
+    enum class Command
+    {
+      DO_NOTHING,
+      SHIFT_LEFT,
+      SHIFT_RIGHT,
+      ROTATE_CCW,
+      ROTATE_CW,
+      SOFT_DROP,
+      HARD_DROP,
+    };
+
     /* Convert a Point from playfield coordinates to draw window coordinates */
     tetris::Point playfield_point_to_draw_window_point(const tetris::Point& point);
 

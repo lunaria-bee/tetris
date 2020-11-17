@@ -31,18 +31,6 @@ namespace tetris
     WEST,
   };
 
-  /* Enum to identify user game commands. */
-  enum class Command
-  {
-    DO_NOTHING,
-    SHIFT_LEFT,
-    SHIFT_RIGHT,
-    ROTATE_CCW,
-    ROTATE_CW,
-    SOFT_DROP,
-    HARD_DROP,
-  };
-
   /* Bitmask to identify results of collision tests. */
   namespace CollisionResult
   {
@@ -180,13 +168,6 @@ namespace tetris
     // TODO score hard drop
     // TODO score soft drop
     // TODO score back-to-back bonus
-
-    /* Execute a command, if possible.
-     *
-     * command: Command to try.
-     * return: Success or failure.
-     * */
-    bool try_command(Command command);
 
     /* Write the active tetrimino's minoes to the static playfield */
     void lock_active_tetrimino();

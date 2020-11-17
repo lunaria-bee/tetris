@@ -12,14 +12,14 @@ bool gravity=true; // TODO set from command line / config file
 
 std::ofstream tetris::log::out;
 
-const std::map<int, tetris::Command> INPUT_MAP{
-  {ERR, tetris::Command::DO_NOTHING},
-  {'h', tetris::Command::SHIFT_LEFT},
-  {'l', tetris::Command::SHIFT_RIGHT},
-  {'j', tetris::Command::ROTATE_CCW},
-  {'k', tetris::Command::ROTATE_CW},
-  {'n', tetris::Command::SOFT_DROP},
-  {' ', tetris::Command::HARD_DROP},
+const std::map<int, tetris::ui::Command> INPUT_MAP{
+  {ERR, tetris::ui::Command::DO_NOTHING},
+  {'h', tetris::ui::Command::SHIFT_LEFT},
+  {'l', tetris::ui::Command::SHIFT_RIGHT},
+  {'j', tetris::ui::Command::ROTATE_CCW},
+  {'k', tetris::ui::Command::ROTATE_CW},
+  {'n', tetris::ui::Command::SOFT_DROP},
+  {' ', tetris::ui::Command::HARD_DROP},
 };
 
 int main()
@@ -58,21 +58,47 @@ int main()
           || !extended_placement_active
           || extended_placement_moves <= tetris::EXTENDED_PLACEMENT_MAX_MOVES)
       {
-        tetris::Command command = result->second;
-        bool command_success = game.try_command(result->second);
-        if (command_success)
+        tetris::ui::Command command = result->second;
+
+        bool move_executed = false;
+        switch (command)
         {
-          if (command == tetris::Command::SOFT_DROP)
-            last_drop = tick_start;
+          case tetris::ui::Command::DO_NOTHING:
+            break;
 
-          if (command == tetris::Command::HARD_DROP)
-            hard_drop = true;
+          case tetris::ui::Command::SHIFT_LEFT:
+            move_executed = game.active_tetrimino.translate(tetris::Point(0, -1), game.playfield);
+            break;
 
-          if (extended_placement_active)
-          {
-            extended_placement_start = tick_start;
-            ++extended_placement_moves;
-          }
+          case tetris::ui::Command::SHIFT_RIGHT:
+            move_executed = game.active_tetrimino.translate(tetris::Point(0, 1), game.playfield);
+            break;
+
+          case tetris::ui::Command::ROTATE_CCW:
+            move_executed = game.active_tetrimino.rotate_ccw(game.playfield);
+            break;
+
+          case tetris::ui::Command::ROTATE_CW:
+            move_executed = game.active_tetrimino.rotate_cw(game.playfield);
+            break;
+
+          case tetris::ui::Command::SOFT_DROP:
+            move_executed = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
+            if (move_executed)
+              last_drop = tick_start;
+            break;
+
+          case tetris::ui::Command::HARD_DROP:
+            move_executed = game.active_tetrimino.hard_drop(game.playfield);
+            if (move_executed)
+              hard_drop = true;
+            break;
+        }
+
+        if (move_executed && extended_placement_active)
+        {
+          extended_placement_start = tick_start;
+          ++extended_placement_moves;
         }
       }
     }

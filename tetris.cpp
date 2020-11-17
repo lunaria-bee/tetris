@@ -362,42 +362,6 @@ void Bag::extend_queue()
 
 /* Game Class Methods */
 
-bool Game::try_command(Command command)
-{
-  switch(command)
-  {
-    case Command::DO_NOTHING:
-      return false;
-      break;
-
-    case Command::SHIFT_LEFT:
-      active_tetrimino.translate(Point(0, -1), playfield);
-      break;
-
-    case Command::SHIFT_RIGHT:
-      active_tetrimino.translate(Point(0, 1), playfield);
-      break;
-
-    case Command::ROTATE_CCW:
-      active_tetrimino.rotate_ccw(playfield);
-      break;
-
-    case Command::ROTATE_CW:
-      active_tetrimino.rotate_cw(playfield);
-      break;
-
-    case Command::SOFT_DROP:
-      active_tetrimino.translate(Point(1, 0), playfield);
-      break;
-
-    case Command::HARD_DROP:
-      active_tetrimino.hard_drop(playfield);
-      break;
-  }
-
-  return true;
-}
-
 void Game::lock_active_tetrimino()
 {
   for (const Point& p : active_tetrimino.points)
