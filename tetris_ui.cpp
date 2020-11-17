@@ -7,15 +7,15 @@
 #include <thread>
 
 
-using namespace tetris_ui;
+using namespace tetris::ui;
 
 
-tetris::Point tetris_ui::playfield_point_to_draw_window_point(const tetris::Point& point)
+tetris::Point tetris::ui::playfield_point_to_draw_window_point(const tetris::Point& point)
 {
   return tetris::Point(1+point.row-19, 1+point.col*2);
 }
 
-void tetris_ui::init_ui()
+void tetris::ui::init_ui()
 {
   // Initialize ncurses
   initscr();
@@ -49,7 +49,7 @@ void tetris_ui::init_ui()
   getch();
 }
 
-void tetris_ui::draw_playbox()
+void tetris::ui::draw_playbox()
 {
   // Draw top border
   addwstr(L"┌");
@@ -76,7 +76,7 @@ void tetris_ui::draw_playbox()
   addwstr(L"┘");
 }
 
-void tetris_ui::redraw_playfield(const tetris::Playfield& playfield, const tetris::Tetrimino& active_tetrimino)
+void tetris::ui::redraw_playfield(const tetris::Playfield& playfield, const tetris::Tetrimino& active_tetrimino)
 {
   // Draw playfield
   for (int i=19; i<40; i++)
@@ -125,7 +125,7 @@ void tetris_ui::redraw_playfield(const tetris::Playfield& playfield, const tetri
   attroff(COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
 }
 
-void tetris_ui::redraw_score(long score, short level)
+void tetris::ui::redraw_score(long score, short level)
 {
   mvprintw(1, 25, "Score: %ld", score);
   mvprintw(2, 25, "Level: %hd", level);

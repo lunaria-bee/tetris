@@ -3,9 +3,12 @@
 
 #include <fstream>
 
-namespace tetris_log
+namespace tetris
 {
-  extern std::ofstream out;
+  namespace log
+  {
+    extern std::ofstream out;
+  }
 }
 
 #endif

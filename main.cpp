@@ -10,7 +10,7 @@
 
 bool gravity=true; // TODO set from command line / config file
 
-std::ofstream tetris_log::out;
+std::ofstream tetris::log::out;
 
 const std::map<int, tetris::Command> INPUT_MAP{
   {ERR, tetris::Command::DO_NOTHING},
@@ -24,9 +24,9 @@ const std::map<int, tetris::Command> INPUT_MAP{
 
 int main()
 {
-  tetris_log::out.open("tetris.log");
+  tetris::log::out.open("tetris.log");
 
-  tetris_ui::init_ui();
+  tetris::ui::init_ui();
 
   // Set up game
   tetris::Game game;
@@ -47,8 +47,8 @@ int main()
   {
     tick_start = std::chrono::steady_clock::now();
 
-    tetris_ui::redraw_playfield(game.playfield, game.active_tetrimino);
-    tetris_ui::redraw_score(game.score, game.level);
+    tetris::ui::redraw_playfield(game.playfield, game.active_tetrimino);
+    tetris::ui::redraw_score(game.score, game.level);
 
     // Process input
     auto result = INPUT_MAP.find(getch());

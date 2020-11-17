@@ -367,6 +367,7 @@ bool Game::try_command(Command command)
   switch(command)
   {
     case Command::DO_NOTHING:
+      return false;
       break;
 
     case Command::SHIFT_LEFT:
@@ -508,7 +509,7 @@ bool tetris::process_srs(TetriminoType type,
                          TetriminoFacing facing_after,
                          Point& offset)
 {
-  tetris_log::out << "Rotating "
+  tetris::log::out << "Rotating "
                   << (short)facing_before
                   << " -> "
                   << (short)facing_after
@@ -517,36 +518,36 @@ bool tetris::process_srs(TetriminoType type,
   if (!check_collision(points, playfield))
   {
     // New points already free of collision
-    tetris_log::out << "SRS not needed" << std::endl;
+    tetris::log::out << "SRS not needed" << std::endl;
     return true;
   }
   else
   {
-    tetris_log::out << "Processing SRS" << std::endl;
+    tetris::log::out << "Processing SRS" << std::endl;
 
     for (const Point& p : points)
     {
-      tetris_log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
+      tetris::log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
     }
     // New points not free of collision, process super rotation system
     for (short i=0; i<4; i++)
     {
       // Calculate and apply SRS offset
       offset = calculate_srs_offset(i, type, facing_before, facing_after);
-      tetris_log::out << "Checking SRS offset " << i+1 << ": "
+      tetris::log::out << "Checking SRS offset " << i+1 << ": "
                       << offset.row << "," << offset.col
                       << std::endl;
       std::array<Point, 4> offset_points = points;
       for (Point& p : offset_points)
       {
         p += offset;
-        tetris_log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
+        tetris::log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
       }
 
       // Check resulting points for collisions
       if (!check_collision(offset_points, playfield))
       {
-        tetris_log::out << "Using SRS offset " << i+1 << ": "
+        tetris::log::out << "Using SRS offset " << i+1 << ": "
                         << offset.row << "," << offset.col
                         << std::endl;
         return true;
@@ -554,7 +555,7 @@ bool tetris::process_srs(TetriminoType type,
     }
   }
 
-  tetris_log::out << "No suitable SRS offset found" << std::endl;
+  tetris::log::out << "No suitable SRS offset found" << std::endl;
 
   return false;
 }
