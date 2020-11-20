@@ -11,6 +11,8 @@ namespace tetris
     enum class Command
     {
       DO_NOTHING,
+      PAUSE,
+      QUIT,
       SHIFT_LEFT,
       SHIFT_RIGHT,
       ROTATE_CCW,
@@ -33,6 +35,9 @@ namespace tetris
 
     /* Redraw the player's current score and level */
     void redraw_score(long score, short level);
+
+    /* Redraw a screen indicating the game is paused */
+    void redraw_pause_screen();
 
     /* Map of (tetrimino type -> ncurses color code) for active and locked minoes */
     const std::map<tetris::TetriminoType, short> MINO_COLOR{

@@ -15,6 +15,8 @@ std::ofstream tetris::log::out;
 
 const std::map<int, tetris::ui::Command> INPUT_MAP{
   {ERR, tetris::ui::Command::DO_NOTHING},
+  {'p', tetris::ui::Command::PAUSE},
+  {'q', tetris::ui::Command::QUIT},
   {'h', tetris::ui::Command::SHIFT_LEFT},
   {'l', tetris::ui::Command::SHIFT_RIGHT},
   {'j', tetris::ui::Command::ROTATE_CCW},
@@ -43,17 +45,29 @@ int main()
   std::chrono::steady_clock::time_point last_drop = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_start = std::chrono::steady_clock::now();
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
+  bool paused = false;
 
   while (!game.is_game_over())
   {
     tick_start = std::chrono::steady_clock::now();
 
-    tetris::ui::redraw_playfield(game.playfield, game.active_tetrimino);
+    if (paused)
+      tetris::ui::redraw_pause_screen();
+    else
+      tetris::ui::redraw_playfield(game.playfield, game.active_tetrimino);
+
     tetris::ui::redraw_score(game.score, game.level);
 
-    // Process input
+    // Get input
     auto result = INPUT_MAP.find(getch());
+    tetris::ui::Command command = tetris::ui::Command::DO_NOTHING;
     if (result != INPUT_MAP.end())
+      command = result->second;
+
+    if (command == tetris::ui::Command::QUIT)
+      break;
+
+    if (!paused)
     {
       if (!gravity
           || !extended_placement_active
@@ -66,6 +80,9 @@ int main()
         {
           case tetris::ui::Command::DO_NOTHING:
             break;
+
+          case tetris::ui::Command::PAUSE:
+            paused = true;
 
           case tetris::ui::Command::SHIFT_LEFT:
             move_executed = game.active_tetrimino.translate(tetris::Point(0, -1), game.playfield);
@@ -102,43 +119,47 @@ int main()
           ++extended_placement_moves;
         }
       }
-    }
 
-    // Process drop
-    if (gravity)
-    {
-      if (tick_start - last_drop >= game.get_drop_interval())
+      // Process drop
+      if (gravity)
       {
-        bool fell = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
-        if (fell && extended_placement_active)
+        if (tick_start - last_drop >= game.get_drop_interval())
+        {
+          bool fell = game.active_tetrimino.translate(tetris::Point(1, 0), game.playfield);
+          if (fell && extended_placement_active)
+            extended_placement_active = false;
+          last_drop = tick_start;
+        }
+      }
+
+      // Check for mino landing
+      if (game.active_tetrimino.is_landed(game.playfield))
+      {
+        // Initialize extended placement mode
+        if (!extended_placement_active)
+        {
+          extended_placement_start = tick_start;
+          extended_placement_moves = 0;
+          extended_placement_active = true;
+        }
+
+        // If tetrimino may no longer be manipulated
+        if (hard_drop
+            || gravity && tick_start > extended_placement_start + tetris::EXTENDED_PLACEMENT_MAX_TIME)
+        {
+          game.lock_active_tetrimino();
+          game.clear_rows();
+          game.draw_new_tetrimino();
+
+          // Reset placement control
           extended_placement_active = false;
-        last_drop = tick_start;
+          hard_drop = false;
+        }
       }
     }
-
-    // Check for mino landing
-    if (game.active_tetrimino.is_landed(game.playfield))
+    else if (command == tetris::ui::Command::PAUSE)
     {
-      // Initialize extended placement mode
-      if (!extended_placement_active)
-      {
-        extended_placement_start = tick_start;
-        extended_placement_moves = 0;
-        extended_placement_active = true;
-      }
-
-      // If tetrimino may no longer be manipulated
-      if (hard_drop
-          || gravity && tick_start > extended_placement_start + tetris::EXTENDED_PLACEMENT_MAX_TIME)
-      {
-        game.lock_active_tetrimino();
-        game.clear_rows();
-        game.draw_new_tetrimino();
-
-        // Reset placement control
-        extended_placement_active = false;
-        hard_drop = false;
-      }
+      paused = false;
     }
 
     // Delay until next tick

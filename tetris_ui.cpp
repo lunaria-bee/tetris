@@ -130,3 +130,15 @@ void tetris::ui::redraw_score(long score, short level)
   mvprintw(1, 25, "Score: %ld", score);
   mvprintw(2, 25, "Level: %hd", level);
 }
+
+void tetris::ui::redraw_pause_screen()
+{
+  for (short i=19; i<40; i++)
+  {
+    tetris::Point window_coords = playfield_point_to_draw_window_point(tetris::Point(i, 0));
+    mvaddwstr(window_coords.row, window_coords.col, L"                    ");
+  }
+  tetris::Point window_coords = playfield_point_to_draw_window_point(tetris::Point(29, 3));
+  ++window_coords.col;
+  mvaddwstr(window_coords.row, window_coords.col, L"PAUSED");
+}
