@@ -1,5 +1,5 @@
 # tetris
-Terminal tetris using ncurses. Although rudimentary and unfinished, you can now play a full game from beginning to end.
+Terminal tetris using ncurses. Although rudimentary and unfinished, you can still play a full game from beginning to end.
 
 ## Controls
 
