@@ -12,6 +12,8 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can now 
   <tr><td><code>[k]</code></td> <td>Rotate piece clockwise.</td></tr>
   <tr><td><code>[n]</code></td> <td>Soft drop.</td></tr>
   <tr><td><code>[space]</code></td> <td>Hard drop.</td></tr>
+  <tr><td><code>[p]</code></td> <td>Pause.</td></tr>
+  <tr><td><code>[q]</code></td> <td>Quit.</td></td>
 </table>
 
 ## Building
@@ -22,7 +24,6 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can now 
 
 ## Upcoming improvements
 
-- Pause and quit commands.
 - Improved UI layout.
 - Piece queue preview.
 - Piece holding.
