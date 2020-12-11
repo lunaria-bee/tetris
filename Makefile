@@ -1,16 +1,15 @@
-CC=g++
+CXX=g++
 
-all: main.o tetris.o tetris_ui.o
-	$(CC) main.o tetris.o tetris_ui.o -lncursesw -o tetris
+all: tetris
+
+tetris: main.o tetris.o tetris_ui.o
+	$(CXX) $^ -lncursesw -o tetris
 
 main.o: main.cpp
-	$(CC) main.cpp -c
+	$(CXX) main.cpp -c
 
-tetris.o: tetris.cpp tetris.hpp
-	$(CC) tetris.cpp -c
-
-tetris_ui.o: tetris_ui.cpp tetris_ui.hpp
-	$(CC) tetris_ui.cpp -c
+%.o: %.cpp %.hpp
+	$(CXX) $< -c
 
 clean:
 	rm *.o tetris
