@@ -234,15 +234,6 @@ namespace tetris
                                TetriminoFacing facing_after);
 
 
-    /* Length of each game tick. */
-    const std::chrono::duration<float> TICK_DURATION(1.0/60.0);
-
-    /* Maximum number of moves permitted in extended placement mode. */
-    const short EXTENDED_PLACEMENT_MAX_MOVES = 15;
-
-    /* Extended placement timer duration. */
-    const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
-
     /* Multiplied by level to increase score based on number of rows cleared at once */
     const std::map<short, short> row_clear_multipliers{
       {1, 100}, {2, 300}, {3, 500}, {4, 800}};
