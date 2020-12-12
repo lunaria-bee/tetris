@@ -23,15 +23,15 @@ int main()
   bool play = true;
   while (play)
   {
-    control::Result result = control::play_game();
+    control::EndType result = control::play_game();
     switch (result)
     {
-      case control::Result::GAME_OVER:
-      case control::Result::QUIT:
+      case control::EndType::GAME_OVER:
+      case control::EndType::QUIT:
         play = false;
         break;
 
-      case control::Result::RESTART:
+      case control::EndType::RESTART:
         break;
     }
   }

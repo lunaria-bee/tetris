@@ -22,7 +22,7 @@ namespace tetris
     };
 
     /* TODO */
-    enum class Result
+    enum class EndType
     {
       GAME_OVER,
       QUIT,
@@ -53,6 +53,6 @@ namespace tetris
     const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
     /* Play a game of tetris */
-    Result play_game(bool gravity=true/*TODO set through config file*/);
+    EndType play_game(bool gravity=true/*TODO set through config file*/);
   }
 }
