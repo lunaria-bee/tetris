@@ -13,6 +13,7 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can stil
   <tr><td><code>[n]</code></td> <td>Soft drop.</td></tr>
   <tr><td><code>[space]</code></td> <td>Hard drop.</td></tr>
   <tr><td><code>[p]</code></td> <td>Pause.</td></tr>
+  <tr><td><code>[r]</code></td> <td>Restart.</td></tr>
   <tr><td><code>[q]</code></td> <td>Quit.</td></td>
 </table>
 
