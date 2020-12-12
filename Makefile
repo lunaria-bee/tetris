@@ -2,7 +2,7 @@ CXX=g++
 
 all: tetris
 
-tetris: main.o tetris.o tetris_ui.o
+tetris: main.o tetris_game.o tetris_ui.o
 	$(CXX) $^ -lncursesw -o tetris
 
 main.o: main.cpp

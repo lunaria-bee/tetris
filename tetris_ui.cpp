@@ -1,5 +1,5 @@
 #include "tetris_ui.hpp"
-#include "tetris.hpp"
+#include "tetris_game.hpp"
 #include <ncurses.h>
 #include <array>
 #include <chrono>
@@ -7,12 +7,13 @@
 #include <thread>
 
 
+using namespace tetris;
 using namespace tetris::ui;
 
 
-tetris::Point tetris::ui::playfield_point_to_draw_window_point(const tetris::Point& point)
+game::Point tetris::ui::playfield_point_to_draw_window_point(const game::Point& point)
 {
-  return tetris::Point(1+point.row-19, 1+point.col*2);
+  return game::Point(1+point.row-19, 1+point.col*2);
 }
 
 void tetris::ui::init_ui()
@@ -29,20 +30,20 @@ void tetris::ui::init_ui()
   // Initialize colors, with tetromino types as keys
   start_color();
   use_default_colors();
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::O), COLOR_WHITE, COLOR_WHITE);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::I), COLOR_CYAN, COLOR_CYAN);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::T), COLOR_MAGENTA, COLOR_MAGENTA);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::L), COLOR_YELLOW, COLOR_YELLOW);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::J), COLOR_BLUE, COLOR_BLUE);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::S), COLOR_GREEN, COLOR_GREEN);
-  init_pair(MINO_COLOR.at(tetris::TetriminoType::Z), COLOR_RED, COLOR_RED);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::O), COLOR_WHITE, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::I), COLOR_CYAN, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::T), COLOR_MAGENTA, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::L), COLOR_YELLOW, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::J), COLOR_BLUE, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::S), COLOR_GREEN, 0);
-  init_pair(GHOST_COLOR.at(tetris::TetriminoType::Z), COLOR_RED, 0);
+  init_pair(MINO_COLOR.at(game::TetriminoType::O), COLOR_WHITE, COLOR_WHITE);
+  init_pair(MINO_COLOR.at(game::TetriminoType::I), COLOR_CYAN, COLOR_CYAN);
+  init_pair(MINO_COLOR.at(game::TetriminoType::T), COLOR_MAGENTA, COLOR_MAGENTA);
+  init_pair(MINO_COLOR.at(game::TetriminoType::L), COLOR_YELLOW, COLOR_YELLOW);
+  init_pair(MINO_COLOR.at(game::TetriminoType::J), COLOR_BLUE, COLOR_BLUE);
+  init_pair(MINO_COLOR.at(game::TetriminoType::S), COLOR_GREEN, COLOR_GREEN);
+  init_pair(MINO_COLOR.at(game::TetriminoType::Z), COLOR_RED, COLOR_RED);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::O), COLOR_WHITE, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::I), COLOR_CYAN, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::T), COLOR_MAGENTA, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::L), COLOR_YELLOW, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::J), COLOR_BLUE, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::S), COLOR_GREEN, 0);
+  init_pair(GHOST_COLOR.at(game::TetriminoType::Z), COLOR_RED, 0);
 
   draw_playbox();
   refresh();
@@ -76,17 +77,17 @@ void tetris::ui::draw_playbox()
   addwstr(L"┘");
 }
 
-void tetris::ui::redraw_playfield(const tetris::Playfield& playfield, const tetris::Tetrimino& active_tetrimino)
+void tetris::ui::redraw_playfield(const game::Playfield& playfield, const game::Tetrimino& active_tetrimino)
 {
   // Draw playfield
   for (int i=19; i<40; i++)
   {
     for (int j=0; j<10; j++)
     {
-      tetris::Point window_coords = playfield_point_to_draw_window_point(tetris::Point(i, j));
+      game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, j));
       move(window_coords.row, window_coords.col);
       // If no mino is present, draw guide dot
-      if (playfield[i][j] == tetris::TetriminoType::NONE)
+      if (playfield[i][j] == game::TetriminoType::NONE)
       {
         addstr(". ");
       }
@@ -102,11 +103,11 @@ void tetris::ui::redraw_playfield(const tetris::Playfield& playfield, const tetr
 
   // Draw ghost at landing
   attron(COLOR_PAIR(GHOST_COLOR.at(active_tetrimino.type)));
-  for (tetris::Point p : active_tetrimino.get_landing(playfield).points)
+  for (game::Point p : active_tetrimino.get_landing(playfield).points)
   {
     if (p.row >= 19)
     {
-      tetris::Point window_coords = playfield_point_to_draw_window_point(p);
+      game::Point window_coords = playfield_point_to_draw_window_point(p);
       mvaddwstr(window_coords.row, window_coords.col, L"[]");
     }
   }
@@ -114,11 +115,11 @@ void tetris::ui::redraw_playfield(const tetris::Playfield& playfield, const tetr
 
   // Draw active tetrimino
   attron(COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
-  for (tetris::Point p : active_tetrimino.points)
+  for (game::Point p : active_tetrimino.points)
   {
     if (p.row >= 19)
     {
-      tetris::Point window_coords = playfield_point_to_draw_window_point(p);
+      game::Point window_coords = playfield_point_to_draw_window_point(p);
       mvaddwstr(window_coords.row, window_coords.col, L"..");
     }
   }
@@ -135,10 +136,10 @@ void tetris::ui::redraw_pause_screen()
 {
   for (short i=19; i<40; i++)
   {
-    tetris::Point window_coords = playfield_point_to_draw_window_point(tetris::Point(i, 0));
+    game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, 0));
     mvaddwstr(window_coords.row, window_coords.col, L"                    ");
   }
-  tetris::Point window_coords = playfield_point_to_draw_window_point(tetris::Point(29, 3));
+  game::Point window_coords = playfield_point_to_draw_window_point(game::Point(29, 3));
   ++window_coords.col;
   mvaddwstr(window_coords.row, window_coords.col, L"PAUSED");
 }

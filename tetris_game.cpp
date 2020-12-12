@@ -1,4 +1,4 @@
-#include "tetris.hpp"
+#include "tetris_game.hpp"
 #include "tetris_log.hpp"
 #include <algorithm>
 #include <array>
@@ -9,6 +9,7 @@
 
 
 using namespace tetris;
+using namespace tetris::game;
 
 
 /* Point Class Methods */
@@ -443,7 +444,7 @@ std::chrono::duration<float> Game::get_drop_interval()
 
 /* Free Functions */
 
-short tetris::check_collision(const Point& point, const Playfield& playfield)
+short tetris::game::check_collision(const Point& point, const Playfield& playfield)
 {
   short result = CollisionResult::NONE;
 
@@ -459,7 +460,7 @@ short tetris::check_collision(const Point& point, const Playfield& playfield)
   return result;
 }
 
-short tetris::check_collision(const std::array<Point, 4>& points, const Playfield& playfield)
+short tetris::game::check_collision(const std::array<Point, 4>& points, const Playfield& playfield)
 {
   short result = CollisionResult::NONE;
   for (const Point& p : points)
@@ -468,77 +469,77 @@ short tetris::check_collision(const std::array<Point, 4>& points, const Playfiel
   return result;
 }
 
-bool tetris::process_srs(TetriminoType type,
-                         const std::array<Point, 4>& points,
-                         const Playfield playfield,
-                         TetriminoFacing facing_before,
-                         TetriminoFacing facing_after,
-                         Point& offset)
+bool tetris::game::process_srs(TetriminoType type,
+                                const std::array<Point, 4>& points,
+                                const Playfield playfield,
+                                TetriminoFacing facing_before,
+                                TetriminoFacing facing_after,
+                                Point& offset)
 {
-  tetris::log::out << "Rotating "
-                  << (short)facing_before
-                  << " -> "
-                  << (short)facing_after
-                  << std::endl;
+  log::out << "Rotating "
+           << (short)facing_before
+           << " -> "
+           << (short)facing_after
+           << std::endl;
 
   if (!check_collision(points, playfield))
   {
     // New points already free of collision
-    tetris::log::out << "SRS not needed" << std::endl;
+    log::out << "SRS not needed" << std::endl;
     return true;
   }
   else
   {
-    tetris::log::out << "Processing SRS" << std::endl;
+    log::out << "Processing SRS" << std::endl;
 
     for (const Point& p : points)
     {
-      tetris::log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
+      log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
     }
     // New points not free of collision, process super rotation system
     for (short i=0; i<4; i++)
     {
       // Calculate and apply SRS offset
       offset = calculate_srs_offset(i, type, facing_before, facing_after);
-      tetris::log::out << "Checking SRS offset " << i+1 << ": "
-                      << offset.row << "," << offset.col
-                      << std::endl;
+      log::out << "Checking SRS offset " << i+1 << ": "
+               << offset.row << "," << offset.col
+               << std::endl;
       std::array<Point, 4> offset_points = points;
       for (Point& p : offset_points)
       {
         p += offset;
-        tetris::log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
+        log::out << "Point(" << p.row << "," << p.col << ")" << std::endl;
       }
 
       // Check resulting points for collisions
       if (!check_collision(offset_points, playfield))
       {
-        tetris::log::out << "Using SRS offset " << i+1 << ": "
-                        << offset.row << "," << offset.col
-                        << std::endl;
+        log::out << "Using SRS offset " << i+1 << ": "
+                 << offset.row << "," << offset.col
+                 << std::endl;
         return true;
       }
     }
   }
 
-  tetris::log::out << "No suitable SRS offset found" << std::endl;
+  log::out << "No suitable SRS offset found" << std::endl;
 
   return false;
 }
 
-Point tetris::get_srs_offset_value(TetriminoType type, TetriminoFacing facing, short point_index)
+Point tetris::game::get_srs_offset_value(TetriminoType type, TetriminoFacing facing, short point_index)
 {
   switch(type)
   {
-    case tetris::TetriminoType::I:
+    case TetriminoType::I:
       return I_SRS_OFFSET_VALUES.at(facing)[point_index];
       break;
 
-    case tetris::TetriminoType::T:
-    case tetris::TetriminoType::L:
-    case tetris::TetriminoType::J:
-    case tetris::TetriminoType::S:
-    case tetris::TetriminoType::Z:
+    case TetriminoType::T:
+    case TetriminoType::L:
+    case TetriminoType::J:
+    case TetriminoType::S:
+    case TetriminoType::Z:
       return STANDARD_SRS_OFFSET_VALUES.at(facing)[point_index];
       break;
 
@@ -548,10 +549,10 @@ Point tetris::get_srs_offset_value(TetriminoType type, TetriminoFacing facing, s
   }
 }
 
-Point tetris::calculate_srs_offset(short point_index,
-                                   TetriminoType type,
-                                   TetriminoFacing facing_before,
-                                   TetriminoFacing facing_after)
+Point tetris::game::calculate_srs_offset(short point_index,
+                                          TetriminoType type,
+                                          TetriminoFacing facing_before,
+                                          TetriminoFacing facing_after)
 {
   return (get_srs_offset_value(type, facing_before, point_index)
           - get_srs_offset_value(type, facing_after, point_index));
