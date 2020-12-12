@@ -9,7 +9,7 @@ using namespace tetris;
 using namespace tetris::control;
 
 
-void tetris::control::play_game(bool gravity)
+Result tetris::control::play_game(bool gravity)
 {
   // Set up game
   game::Game game;
@@ -44,8 +44,11 @@ void tetris::control::play_game(bool gravity)
     if (result != INPUT_MAP.end())
       command = result->second;
 
+    // Quit early if needed
     if (command == Command::QUIT)
-      break;
+      return Result::QUIT;
+    if (command == Command::RESTART)
+      return Result::RESTART;
 
     if (!paused)
     {
@@ -148,4 +151,6 @@ void tetris::control::play_game(bool gravity)
     if (work_time < TICK_DURATION)
       std::this_thread::sleep_for(TICK_DURATION - work_time);
   }
+
+  return Result::GAME_OVER;
 }

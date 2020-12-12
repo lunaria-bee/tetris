@@ -12,6 +12,7 @@ namespace tetris
       DO_NOTHING,
       PAUSE,
       QUIT,
+      RESTART,
       SHIFT_LEFT,
       SHIFT_RIGHT,
       ROTATE_CCW,
@@ -20,11 +21,20 @@ namespace tetris
       HARD_DROP,
     };
 
+    /* TODO */
+    enum class Result
+    {
+      GAME_OVER,
+      QUIT,
+      RESTART,
+    };
+
     /* Map of (char -> command) */
     const std::map<int, Command> INPUT_MAP{
       {ERR, Command::DO_NOTHING},
       {'p', Command::PAUSE},
       {'q', Command::QUIT},
+      {'r', Command::RESTART},
       {'h', Command::SHIFT_LEFT},
       {'l', Command::SHIFT_RIGHT},
       {'j', Command::ROTATE_CCW},
@@ -43,6 +53,6 @@ namespace tetris
     const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
     /* Play a game of tetris */
-    void play_game(bool gravity=true/*TODO set through config file*/);
+    Result play_game(bool gravity=true/*TODO set through config file*/);
   }
 }

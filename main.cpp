@@ -20,7 +20,21 @@ int main()
 
   ui::init_ui();
 
-  control::play_game();
+  bool play = true;
+  while (play)
+  {
+    control::Result result = control::play_game();
+    switch (result)
+    {
+      case control::Result::GAME_OVER:
+      case control::Result::QUIT:
+        play = false;
+        break;
+
+      case control::Result::RESTART:
+        break;
+    }
+  }
 
   // Close ncurses window and exit
   endwin();
