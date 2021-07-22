@@ -20,11 +20,12 @@ int main()
 
   ui::init_ui();
 
+  control::GameResult result;
   bool play = true;
   while (play)
   {
-    control::EndType result = control::play_game();
-    switch (result)
+    result = control::play_game();
+    switch (result.end_type)
     {
       case control::EndType::GAME_OVER:
       case control::EndType::QUIT:
@@ -38,7 +39,7 @@ int main()
 
   // Close ncurses window and exit
   endwin();
-  // std::cout << "Game over!" << std::endl;
-  // std::cout << "Score: " << game.score << std::endl;
+  std::cout << "Game over!" << std::endl;
+  std::cout << "Score: " << result.end_score << std::endl;
   return 0;
 }

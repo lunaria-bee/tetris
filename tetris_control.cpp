@@ -9,7 +9,17 @@ using namespace tetris;
 using namespace tetris::control;
 
 
-EndType tetris::control::play_game(bool gravity)
+GameResult::GameResult() {}
+
+
+GameResult::GameResult(EndType end_type_init, short end_level_init, long end_score_init)
+  : end_type(end_type_init),
+    end_level(end_level_init),
+    end_score(end_score_init)
+{}
+
+
+GameResult tetris::control::play_game(bool gravity)
 {
   // Set up game
   game::Game game;
@@ -46,9 +56,13 @@ EndType tetris::control::play_game(bool gravity)
 
     // Quit early if needed
     if (command == Command::QUIT)
-      return EndType::QUIT;
+    {
+      return GameResult(EndType::QUIT, game.level, game.score);
+    }
     if (command == Command::RESTART)
-      return EndType::RESTART;
+    {
+      return GameResult(EndType::RESTART, game.level, game.score);
+    }
 
     if (!paused)
     {
@@ -152,5 +166,5 @@ EndType tetris::control::play_game(bool gravity)
       std::this_thread::sleep_for(TICK_DURATION - work_time);
   }
 
-  return EndType::GAME_OVER;
+  return GameResult(EndType::GAME_OVER, game.level, game.score);
 }

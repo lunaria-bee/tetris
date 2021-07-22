@@ -21,12 +21,24 @@ namespace tetris
       HARD_DROP,
     };
 
-    /* TODO */
+    /* Enum to identify how a game ended */
     enum class EndType
     {
       GAME_OVER,
       QUIT,
       RESTART,
+    };
+
+    /* Struct for all results of a game */
+    struct GameResult
+    {
+      EndType end_type;
+      short end_level;
+      long end_score;
+
+      GameResult();
+
+      GameResult(EndType end_type_init, short end_level_init, long end_score_init);
     };
 
     /* Map of (char -> command) */
@@ -53,6 +65,6 @@ namespace tetris
     const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
     /* Play a game of tetris */
-    EndType play_game(bool gravity=true/*TODO set through config file*/);
+    GameResult play_game(bool gravity=true/*TODO set through config file*/);
   }
 }
