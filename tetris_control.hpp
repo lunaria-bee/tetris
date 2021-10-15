@@ -29,6 +29,13 @@ namespace tetris
       RESTART,
     };
 
+    /* Struct for game settings */
+    struct GameSettings
+    {
+      bool gravity;
+      short preview_size;
+    };
+
     /* Struct for all results of a game */
     struct GameResult
     {
@@ -65,6 +72,6 @@ namespace tetris
     const std::chrono::duration<float> EXTENDED_PLACEMENT_MAX_TIME(0.5);
 
     /* Play a game of tetris */
-    GameResult play_game(bool gravity=true/*TODO set through config file*/);
+    GameResult play_game(GameSettings settings);
   }
 }

@@ -19,7 +19,7 @@ GameResult::GameResult(EndType end_type_init, short end_level_init, long end_sco
 {}
 
 
-GameResult tetris::control::play_game(bool gravity)
+GameResult tetris::control::play_game(GameSettings settings)
 {
   // Set up game
   game::Game game;
@@ -66,7 +66,7 @@ GameResult tetris::control::play_game(bool gravity)
 
     if (!paused)
     {
-      if (!gravity
+      if (!settings.gravity
           || !extended_placement_active
           || extended_placement_moves <= EXTENDED_PLACEMENT_MAX_MOVES)
       {
@@ -119,7 +119,7 @@ GameResult tetris::control::play_game(bool gravity)
       }
 
       // Process drop
-      if (gravity)
+      if (settings.gravity)
       {
         if (tick_start - last_drop >= game.get_drop_interval())
         {
@@ -143,7 +143,7 @@ GameResult tetris::control::play_game(bool gravity)
 
         // If tetrimino may no longer be manipulated
         if (hard_drop
-            || gravity && tick_start > extended_placement_start + EXTENDED_PLACEMENT_MAX_TIME)
+            || (settings.gravity && tick_start > extended_placement_start + EXTENDED_PLACEMENT_MAX_TIME))
         {
           game.lock_active_tetrimino();
           game.clear_rows();

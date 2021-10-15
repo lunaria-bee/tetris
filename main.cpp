@@ -20,11 +20,15 @@ int main()
 
   ui::init_ui();
 
+  control::GameSettings settings;
+  settings.gravity = true;
+  settings.preview_size = 6;
+
   control::GameResult result;
   bool play = true;
   while (play)
   {
-    result = control::play_game();
+    result = control::play_game(settings);
     switch (result.end_type)
     {
       case control::EndType::GAME_OVER:
