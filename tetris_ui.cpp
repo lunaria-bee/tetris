@@ -1,9 +1,11 @@
 #include "tetris_ui.hpp"
 #include "tetris_game.hpp"
+#include "tetris_log.hpp"
 #include <ncurses.h>
 #include <array>
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <thread>
 
 
@@ -11,9 +13,19 @@ using namespace tetris;
 using namespace tetris::ui;
 
 
+WINDOW *tetris::ui::play_window, *tetris::ui::preview_window, *tetris::ui::score_window;
+
+
 game::Point tetris::ui::playfield_point_to_draw_window_point(const game::Point& point)
 {
   return game::Point(1+point.row-19, 1+point.col*2);
+}
+
+WINDOW* tetris::ui::create_window(const WindowInfo& window_info)
+{
+  return newwin(window_info.height, window_info.width,
+                LINES / 2 + window_info.v_offset,
+                COLS / 2 + window_info.h_offset);
 }
 
 void tetris::ui::init_ui()
@@ -22,6 +34,7 @@ void tetris::ui::init_ui()
   initscr();
   curs_set(0);
   cbreak();
+
   noecho();
   nodelay(stdscr, true);
   keypad(stdscr, true);
@@ -45,36 +58,17 @@ void tetris::ui::init_ui()
   init_pair(GHOST_COLOR.at(game::TetriminoType::S), COLOR_GREEN, 0);
   init_pair(GHOST_COLOR.at(game::TetriminoType::Z), COLOR_RED, 0);
 
-  draw_playbox();
+  // Create windows
+  play_window = create_window(PLAY_WINDOW_INFO);
+  preview_window = create_window(PREVIEW_WINDOW_INFO);
+  score_window = create_window(SCORE_WINDOW_INFO);
+  box(play_window, 0, 0);
+  box(preview_window, 0, 0);
+  box(score_window, 0, 0);
   refresh();
-  getch();
-}
-
-void tetris::ui::draw_playbox()
-{
-  // Draw top border
-  addwstr(L"┌");
-  for (int i=0; i<20; i++)
-    addwstr(L"─");
-  addwstr(L"┐");
-
-  // Draw side borders and rows
-  for (int i=1; i<=21; i++)
-  {
-    mvaddwstr(i, 0, L"│");
-
-    // Draw guide dots
-    for (int j=0; j<10; j++)
-      addstr(". ");
-
-    addwstr(L"│");
-  }
-
-  // Draw bottom border
-  mvaddwstr(22, 0, L"└");
-  for(int i=0; i<20; i++)
-    addwstr(L"─");
-  addwstr(L"┘");
+  wrefresh(play_window);
+  wrefresh(preview_window);
+  wrefresh(score_window);
 }
 
 void tetris::ui::redraw_playfield(const game::Playfield& playfield, const game::Tetrimino& active_tetrimino)
@@ -85,51 +79,54 @@ void tetris::ui::redraw_playfield(const game::Playfield& playfield, const game::
     for (int j=0; j<10; j++)
     {
       game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, j));
-      move(window_coords.row, window_coords.col);
+      wmove(play_window, window_coords.row, window_coords.col);
       // If no mino is present, draw guide dot
       if (playfield[i][j] == game::TetriminoType::NONE)
       {
-        addstr(". ");
+        waddstr(play_window, ". ");
       }
       // Otherwise, draw block
       else
       {
-        attron(COLOR_PAIR(MINO_COLOR.at(playfield[i][j])));
-        addstr("  ");
-        attroff(COLOR_PAIR(MINO_COLOR.at(playfield[i][j])));
+        wattron(play_window, COLOR_PAIR(MINO_COLOR.at(playfield[i][j])));
+        waddstr(play_window, "  ");
+        wattroff(play_window, COLOR_PAIR(MINO_COLOR.at(playfield[i][j])));
       }
     }
   }
 
   // Draw ghost at landing
-  attron(COLOR_PAIR(GHOST_COLOR.at(active_tetrimino.type)));
+  wattron(play_window, COLOR_PAIR(GHOST_COLOR.at(active_tetrimino.type)));
   for (game::Point p : active_tetrimino.get_landing(playfield).points)
   {
     if (p.row >= 19)
     {
       game::Point window_coords = playfield_point_to_draw_window_point(p);
-      mvaddwstr(window_coords.row, window_coords.col, L"[]");
+      mvwaddwstr(play_window, window_coords.row, window_coords.col, L"[]");
     }
   }
-  attroff(COLOR_PAIR(GHOST_COLOR.at(active_tetrimino.type)));
+  wattroff(play_window, COLOR_PAIR(GHOST_COLOR.at(active_tetrimino.type)));
 
   // Draw active tetrimino
-  attron(COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
+  wattron(play_window, COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
   for (game::Point p : active_tetrimino.points)
   {
     if (p.row >= 19)
     {
       game::Point window_coords = playfield_point_to_draw_window_point(p);
-      mvaddwstr(window_coords.row, window_coords.col, L"..");
+      mvwaddwstr(play_window, window_coords.row, window_coords.col, L"..");
     }
   }
-  attroff(COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
+  wattroff(play_window, COLOR_PAIR(MINO_COLOR.at(active_tetrimino.type)));
+
+  wrefresh(play_window);
 }
 
 void tetris::ui::redraw_score(long score, short level)
 {
-  mvprintw(1, 25, "Score: %ld", score);
-  mvprintw(2, 25, "Level: %hd", level);
+  mvwprintw(score_window, 1, 2, "Score: %ld", score);
+  mvwprintw(score_window, 2, 2, "Level: %hd", level);
+  wrefresh(score_window);
 }
 
 void tetris::ui::redraw_pause_screen()
@@ -137,9 +134,11 @@ void tetris::ui::redraw_pause_screen()
   for (short i=19; i<40; i++)
   {
     game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, 0));
-    mvaddwstr(window_coords.row, window_coords.col, L"                    ");
+    mvwaddwstr(play_window, window_coords.row, window_coords.col, L"                    ");
   }
   game::Point window_coords = playfield_point_to_draw_window_point(game::Point(29, 3));
   ++window_coords.col;
-  mvaddwstr(window_coords.row, window_coords.col, L"PAUSED");
+  mvwaddwstr(play_window, window_coords.row, window_coords.col, L"PAUSED");
+
+  wrefresh(play_window);
 }

@@ -2,19 +2,28 @@
 #define TETRIS_UI_HPP
 
 #include "tetris_game.hpp"
+#include <ncurses.h>
+#include <queue>
 
 namespace tetris
 {
   namespace ui
   {
+    /* TODO */
+    struct WindowInfo
+    {
+      short height, width;
+      short v_offset, h_offset;
+    };
+
     /* Convert a Point from playfield coordinates to draw window coordinates */
     game::Point playfield_point_to_draw_window_point(const game::Point& point);
 
+    /* Create a new ncurses window from a WindowInfo object */
+    WINDOW* create_window(const WindowInfo& window_info);
+
     /* Initialize the ncurses UI */
     void init_ui();
-
-    /* Draw an outline around the playfield */
-    void draw_playbox();
 
     /* Redraw the playfield and then the active tetrimino over it */
     void redraw_playfield(const game::Playfield& playfield, const game::Tetrimino& active_tetrimino);
@@ -24,6 +33,11 @@ namespace tetris
 
     /* Redraw a screen indicating the game is paused */
     void redraw_pause_screen();
+
+    /* Window info constants */
+    const WindowInfo PLAY_WINDOW_INFO{23, 22, -11, -11};
+    const WindowInfo PREVIEW_WINDOW_INFO{23, 12, -11, 13};
+    const WindowInfo SCORE_WINDOW_INFO{4, 20, -11, -33};
 
     /* Map of (tetrimino type -> ncurses color code) for active and locked minoes */
     const std::map<game::TetriminoType, short> MINO_COLOR{
@@ -46,6 +60,9 @@ namespace tetris
       {game::TetriminoType::S, 13},
       {game::TetriminoType::Z, 14},
     };
+
+    /* Window pointer globals */
+    extern WINDOW *play_window, *preview_window, *score_window;
   }
 }
 
