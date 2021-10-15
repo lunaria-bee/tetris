@@ -3,9 +3,9 @@
 
 #include <array>
 #include <chrono>
+#include <deque>
 #include <map>
 #include <random>
-#include <queue>
 
 namespace tetris
 {
@@ -141,7 +141,7 @@ namespace tetris
     /* Semi-random generator for tetriminoes. */
     struct Bag
     {
-      std::queue<Tetrimino> tetrimino_queue;
+      std::deque<Tetrimino> tetrimino_queue;
       std::default_random_engine random_generator;
 
       Bag();

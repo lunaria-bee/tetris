@@ -337,7 +337,7 @@ Bag::Bag()
 Tetrimino Bag::pop()
 {
   Tetrimino next = tetrimino_queue.front();
-  tetrimino_queue.pop();
+  tetrimino_queue.pop_front();
   if (tetrimino_queue.size() < 7)
     extend_queue();
 
@@ -359,7 +359,7 @@ void Bag::extend_queue()
   std::shuffle(tetriminos.begin(), tetriminos.end(), random_generator);
 
   for (Tetrimino t : tetriminos)
-    tetrimino_queue.push(t);
+    tetrimino_queue.push_back(t);
 }
 
 
