@@ -80,6 +80,7 @@ GameResult tetris::control::play_game(bool gravity)
 
           case Command::PAUSE:
             paused = true;
+            break;
 
           case Command::SHIFT_LEFT:
             move_executed = game.active_tetrimino.translate(game::Point(0, -1), game.playfield);
