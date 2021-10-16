@@ -31,12 +31,15 @@ namespace tetris
     /* Redraw the player's current score and level */
     void redraw_score(long score, short level);
 
+    /* Redraw the preview of upcoming tetriminoes */
+    void redraw_preview(const std::deque<game::Tetrimino>& tetrimino_queue, short preview_size);
+
     /* Redraw a screen indicating the game is paused */
     void redraw_pause_screen();
 
     /* Window info constants */
     const WindowInfo PLAY_WINDOW_INFO{23, 22, -11, -11};
-    const WindowInfo PREVIEW_WINDOW_INFO{23, 12, -11, 13};
+    const WindowInfo PREVIEW_WINDOW_INFO{21, 14, -11, 13};
     const WindowInfo SCORE_WINDOW_INFO{4, 20, -11, -33};
 
     /* Map of (tetrimino type -> ncurses color code) for active and locked minoes */

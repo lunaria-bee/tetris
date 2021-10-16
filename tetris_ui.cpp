@@ -129,6 +129,38 @@ void tetris::ui::redraw_score(long score, short level)
   wrefresh(score_window);
 }
 
+void tetris::ui::redraw_preview(const std::deque<game::Tetrimino>& tetrimino_queue,
+                                short preview_size)
+{
+  wclear(preview_window);
+  box(preview_window, 0, 0);
+
+  game::Point draw_base{2, -4};
+
+  for (int i=0; i<preview_size; i++)
+  {
+    game::Tetrimino tetrimino = tetrimino_queue[i];
+
+    wattron(preview_window, COLOR_PAIR(MINO_COLOR.at(tetrimino.type)));
+    for (game::Point tetrimino_point : tetrimino.points)
+    {
+      game::Point draw_point = draw_base + playfield_point_to_draw_window_point(tetrimino_point);
+      if (tetrimino.type == game::TetriminoType::I)
+        draw_point.row -= 1;
+
+      mvwaddwstr(preview_window, draw_point.row, draw_point.col, L"..");
+    }
+    wattroff(preview_window, COLOR_PAIR(MINO_COLOR.at(tetrimino.type)));
+
+    if (tetrimino.type == game::TetriminoType::I)
+      draw_base += game::Point(2, 0);
+    else
+      draw_base += game::Point(3, 0);
+  }
+
+  wrefresh(preview_window);
+}
+
 void tetris::ui::redraw_pause_screen()
 {
   for (short i=19; i<40; i++)

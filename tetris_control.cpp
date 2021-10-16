@@ -37,6 +37,8 @@ GameResult tetris::control::play_game(GameSettings settings)
   std::chrono::steady_clock::time_point tick_end = std::chrono::steady_clock::now();
   bool paused = false;
 
+  ui::redraw_preview(game.bag.tetrimino_queue, settings.preview_size);
+
   while (!game.is_game_over())
   {
     tick_start = std::chrono::steady_clock::now();
@@ -148,6 +150,7 @@ GameResult tetris::control::play_game(GameSettings settings)
           game.lock_active_tetrimino();
           game.clear_rows();
           game.draw_new_tetrimino();
+          ui::redraw_preview(game.bag.tetrimino_queue, settings.preview_size);
 
           // Reset placement control
           extended_placement_active = false;
