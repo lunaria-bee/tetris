@@ -71,15 +71,12 @@ namespace tetris
 
     /* Grid in which the tetriminos fall.
      *
-     * The state of a cell in the grid is represented by a short. A value of 0 indicates an
-     * empty cell. Any other value indicates that a mino has been locked in the cell, with the
-     * value corresponding to the type of tetrimino the locked mino was originally part of.
+     * Each cell in the grid stores a TetriminoType indicating what type of tetrimino has
+     * been locked into that cell.
      */
     struct Playfield
     {
       std::array<std::array<TetriminoType, 10>, 40> grid{TetriminoType::NONE};
-
-      short get_column_base(short column) const;
 
       std::array<TetriminoType, 10>& operator[](short index);
       const std::array<TetriminoType, 10>& operator[](short index) const;
@@ -101,8 +98,9 @@ namespace tetris
        *
        * Does not translate if a collision would result.
        *
-       * delta: Offsets for translation.
-       * playfield: Playfield on which translation will occur.
+       * delta[in]: Offsets for translation.
+       * playfield[in]: Playfield on which translation will occur.
+       *
        * return: Whether translation was successful.
        */
       bool translate(const Point& delta, const Playfield& playfield);
@@ -111,7 +109,8 @@ namespace tetris
        *
        * Does not rotate if a collision would result.
        *
-       * playfield: Playfield on which translation will occur.
+       * playfield[in]: Playfield on which translation will occur.
+       *
        * return: Whether rotation was successful.
        */
       bool rotate_ccw(const Playfield& playfield);
@@ -120,25 +119,33 @@ namespace tetris
        *
        * Does not rotate if a collision would result.
        *
-       * playfield: Playfield on which translation will occur.
+       * playfield[in]: Playfield on which rotation will occur.
+       *
        * return: Whether rotation was successful.
        */
       bool rotate_cw(const Playfield& playfield);
 
       /* Drop tetrimino as far as possible.
        *
-       * playfield: Playfield on which tranlsation will occur.
+       * playfield[in]: Playfield on which rotation will occur.
+       *
        * return: Whether translation was successful.
        */
       bool hard_drop(const Playfield& playfield);
 
-      /* Check whether tetrimino has fallen as far as it can. */
+      /* Check whether tetrimino has fallen as far as it can.
+       *
+       * playfield[in]: Playfield on which drop will occur.
+       *
+       * return: Whether hard drop was successfull.
+       */
       bool is_landed(const Playfield& playfield) const;
 
       /* Get the eventual landing point for a tetrimino, assuming it falls on its current
        * path.
        *
-       * playfield: Playfield on which the tetrimino is falling.
+       * playfield[in]: Playfield on which the tetrimino is falling.
+       *
        * return: Tetrimino with the state this one will have once it lands.
        */
       Tetrimino get_landing(const Playfield& playfield) const;
@@ -154,7 +161,7 @@ namespace tetris
 
       /* Remove a tetrimino from the end of the queue and return it.
        *
-       * Will automatically extend the queue if no tetriminoes are available.
+       * Will automatically extend the queue if not enough tetriminoes are available.
        */
       Tetrimino pop();
 
@@ -233,6 +240,15 @@ namespace tetris
     /* Determine how to translate a tetrimino following a rotation.
      *
      * Calculations are made in accordance with the super rotation system.
+     *
+     * point_index[in]: Which SRS point to return (0-3). 0 corresponds to the second SRS
+     *                  point, 3 to the fifth SRS point. The first SRS point is ommitted, as
+     *                  it is always (0, 0).
+     * type[in]: Type of the rotated tetrimino.
+     * facing_before[in]: Tetrimino's facing before the rotation.
+     * facing_after[in]: Tetrimino's facing after the rotation.
+     *
+     * return: SRS offset to apply to tetrimino after rotation.
      */
     Point calculate_srs_offset(short point_index,
                                TetriminoType type,
@@ -242,7 +258,8 @@ namespace tetris
 
     /* Multiplied by level to increase score based on number of rows cleared at once */
     const std::map<short, short> row_clear_multipliers{
-      {1, 100}, {2, 300}, {3, 500}, {4, 800}};
+      {1, 100}, {2, 300}, {3, 500}, {4, 800}
+    };
 
     /* SRS offset values for all tetriminoes other than I and O tetriminoes. */
     const std::map<TetriminoFacing, std::array<Point, 4>> STANDARD_SRS_OFFSET_VALUES{

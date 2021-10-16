@@ -9,7 +9,7 @@ namespace tetris
 {
   namespace ui
   {
-    /* TODO */
+    /* Dimensions and location of ncurses windows */
     struct WindowInfo
     {
       short height, width;
