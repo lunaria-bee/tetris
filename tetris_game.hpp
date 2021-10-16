@@ -4,6 +4,7 @@
 #include <array>
 #include <chrono>
 #include <deque>
+#include <iostream>
 #include <map>
 #include <random>
 
@@ -61,6 +62,11 @@ namespace tetris
       Point& operator+=(const Point& right_op);
       Point operator-(const Point& right_op) const;
       Point& operator-=(const Point& right_op);
+      friend std::ostream &operator<<(std::ostream& out, const Point& p)
+      {
+        out << "(" << p.row << "," << p.col << ")";
+        return out;
+      }
     };
 
     /* Grid in which the tetriminos fall.
