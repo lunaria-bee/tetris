@@ -25,8 +25,6 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can stil
 
 ## Upcoming improvements
 
-- Improved UI layout.
-- Piece queue preview.
 - Piece holding.
 - Soft and hard drops incorporated into scoring.
 - T-spins incorporated into scoring.
