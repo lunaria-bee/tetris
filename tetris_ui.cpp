@@ -125,7 +125,7 @@ void tetris::ui::redraw_playfield(const game::Playfield& playfield, const game::
 void tetris::ui::redraw_score(long score, short rows, short level)
 {
   mvwprintw(score_window, 1, 2, "Score: %ld", score);
-  mvwprintw(score_window, 2, 2, "Lines: %hd", rows);
+  mvwprintw(score_window, 2, 2, "Rows:  %hd", rows);
   mvwprintw(score_window, 3, 2, "Level: %hd", level);
   wrefresh(score_window);
 }
