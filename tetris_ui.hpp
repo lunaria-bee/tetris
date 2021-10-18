@@ -29,7 +29,7 @@ namespace tetris
     void redraw_playfield(const game::Playfield& playfield, const game::Tetrimino& active_tetrimino);
 
     /* Redraw the player's current score and level */
-    void redraw_score(long score, short level);
+    void redraw_score(long score, short rows, short level);
 
     /* Redraw the preview of upcoming tetriminoes */
     void redraw_preview(const std::deque<game::Tetrimino>& tetrimino_queue, short preview_size);
@@ -40,7 +40,7 @@ namespace tetris
     /* Window info constants */
     const WindowInfo PLAY_WINDOW_INFO{23, 22, -11, -11};
     const WindowInfo PREVIEW_WINDOW_INFO{21, 14, -11, 13};
-    const WindowInfo SCORE_WINDOW_INFO{4, 20, -11, -33};
+    const WindowInfo SCORE_WINDOW_INFO{5, 20, -11, -33};
 
     /* Map of (tetrimino type -> ncurses color code) for active and locked minoes */
     const std::map<game::TetriminoType, short> MINO_COLOR{

@@ -48,7 +48,7 @@ GameResult tetris::control::play_game(GameSettings settings)
     else
       ui::redraw_playfield(game.playfield, game.active_tetrimino);
 
-    ui::redraw_score(game.score, game.level);
+    ui::redraw_score(game.score, game.total_rows_cleared, game.level);
 
     // Get input
     auto result = INPUT_MAP.find(getch());

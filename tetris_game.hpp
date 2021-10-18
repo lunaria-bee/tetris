@@ -176,7 +176,8 @@ namespace tetris
       Bag bag;
       Tetrimino active_tetrimino{TetriminoType::I};
       short level = 1;
-      short row_clears_to_next_level = level * 5; // TODO calculate row clears by variable goal system
+      short total_rows_cleared = 0;
+      short total_rows_cleared_for_next_level = 5 * level;
       short max_level = 15;
       long score = 0; // typed for optimism
       // TODO score T-spins

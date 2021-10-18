@@ -413,11 +413,11 @@ void Game::clear_rows()
   // Level up if appropriate
   if (level < max_level)
   {
-    row_clears_to_next_level -= rows_cleared;
-    if (row_clears_to_next_level <= 0)
+    total_rows_cleared += rows_cleared;
+    if (total_rows_cleared >= total_rows_cleared_for_next_level)
     {
       ++level;
-      row_clears_to_next_level = level * 5 + row_clears_to_next_level;
+      total_rows_cleared_for_next_level += level * 5;
     }
   }
 }
