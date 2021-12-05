@@ -31,13 +31,21 @@ $ tetris [-G] [-p PREVIEW_SIZE]
 
 <table>
   <tr>
+    <th>Short</td>
+    <th>Long</td>
+    <th>Arg</td>
+    <th>Description</td>
+  </td>
+  <tr>
     <td><code>-p</code>,</td>
-    <td><code>--preview-size SIZE</code></td>
+    <td><code>--preview-size</code></td>
+    <td><code>SIZE</code></td>
     <td>Set the number of tetrinimoes to show in the piece preview.</td>
   </tr>
   <tr>
     <td></td>
     <td><code>--disable-gravity</code></td>
+    <td></td>
     <td>Disable gravity. Pieces will not fall unless soft dropped or hard dropped, and
         must be hard dropped to lock in place.</td>
   </tr>
