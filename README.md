@@ -48,8 +48,8 @@ $ tetris [-G] [-p PREVIEW_SIZE]
     <td></td>
     <td><code>--disable-gravity</code></td>
     <td></td>
-    <td>Disable gravity. Pieces will not fall unless soft dropped or hard dropped, and
-        must be hard dropped to lock in place.</td>
+    <td>Pieces will not fall unless soft dropped or hard dropped, and must be hard dropped
+        to lock in place.</td>
   </tr>
 </table>
 
