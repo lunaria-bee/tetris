@@ -29,6 +29,8 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can stil
 $ tetris [-G] [-p PREVIEW_SIZE]
 ```
 
+### Options
+
 <table>
   <tr>
     <th>Short</td>
