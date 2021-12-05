@@ -23,6 +23,24 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can stil
 2. Run `make` in cloned directory.
 3. A standalone tetris binary will be output in that same directory.
 
+## Usage
+
+```
+$ tetris [-G] [-p PREVIEW_SIZE]
+```
+
+<table>
+  <tr>
+    <td><code>-G</code></td>
+    <td>Disable gravity. Pieces will not fall unless soft dropped or hard dropped, and
+        must be hard dropped to lock in place.</td>
+  </tr>
+  <tr>
+    <td><code>-p PREVIEW_SIZE</code></td>
+    <td>Set the number of tetrinimoes to show in the piece preview.</td>
+  </tr>
+</table>
+
 ## Upcoming improvements
 
 - Piece holding.
