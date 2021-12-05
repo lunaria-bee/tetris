@@ -39,7 +39,7 @@ $ tetris [-G] [-p PREVIEW_SIZE]
     <th>Description</td>
   </td>
   <tr>
-    <td><code>-p</code>,</td>
+    <td><code>-p</code></td>
     <td><code>--preview-size</code></td>
     <td><code>SIZE</code></td>
     <td>Set the number of tetrinimoes to show in the piece preview.</td>
