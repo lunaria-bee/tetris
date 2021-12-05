@@ -26,7 +26,7 @@ Terminal tetris using ncurses. Although rudimentary and unfinished, you can stil
 ## Usage
 
 ```
-$ tetris [-G] [-p PREVIEW_SIZE]
+$ tetris [OPTS]...
 ```
 
 ### Options
