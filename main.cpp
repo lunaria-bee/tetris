@@ -17,9 +17,11 @@ namespace tetris
 {
   namespace options
   {
-    const char OPTSTRING[5] = "hGp:";
-    const option LONGOPTS[2] = {
-      {"help", false, nullptr, 256},
+    const char OPTSTRING[5] = "p:Gh";
+    const option LONGOPTS[4] = {
+      {"preview-size", true, nullptr, 'p'},
+      {"disable-gravity", false, nullptr, 256},
+      {"help", false, nullptr, 1024},
       {0, 0, 0, 0},
     };
   }
@@ -34,12 +36,12 @@ namespace tetris
     void init(const std::string& run_command)
     {
       usage =
-        "Usage: " + run_command + " [-G] [-p PREVIEW_SIZE]";
+        "Usage: " + run_command + " [OPTS]...";
 
       details =
-        "-G               Disable gravity. Pieces will not fall unless soft dropped or " "\n"
-        "                 hard dropped, and must be hard dropped to lock in place." "\n"
-        "-p PREVIEW_SIZE  Set the number of tetriminoes to show in the piece preview.";
+        "-p, --preview-size SIZE  Set the number of tetriminoes to show in the piece preview." "\n"
+        "    --disable-gravity    Pieces will not fall unless soft dropped or hard dropped, and" "\n"
+        "                         must be hard dropped to lock in place.";
 
       brief =
         usage + "\n"
@@ -56,7 +58,7 @@ namespace tetris
 
 std::ofstream log::out;
 
-sss
+
 int main(int const argc, char* const argv[])
 {
   control::GameSettings settings;
@@ -68,11 +70,7 @@ int main(int const argc, char* const argv[])
   while ((opt = getopt_long(argc, argv, options::OPTSTRING, options::LONGOPTS, longindex)) != -1)
   {
     switch(opt)
-j    {
-      case 'G':
-        settings.gravity = false;
-        break;
-
+    {
       case 'p':
       {
         int preview_size = atoi(optarg);
@@ -91,13 +89,17 @@ j    {
         break;
       }
 
+      case 257: // --disable-gravity
+        settings.gravity = false;
+        break;
+
       case 'h':
         tetris::help::init(argv[0]);
         std::cout << help::brief << std::endl;
         exit(0);
         break;
 
-      case 256: // --help
+      case 1024: // --help
         tetris::help::init(argv[0]);
         std:: cout << help::complete << std::endl;
         exit(0);
