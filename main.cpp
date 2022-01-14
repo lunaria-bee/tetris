@@ -118,7 +118,7 @@ int main(int const argc, char* const argv[])
 
   log::out.open("tetris.log");
 
-  ui::init_ui();
+  ui::init_ui(settings.preview_size);
 
   control::GameResult result;
   bool play = true;

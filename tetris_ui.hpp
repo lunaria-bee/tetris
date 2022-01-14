@@ -23,7 +23,7 @@ namespace tetris
     WINDOW* create_window(const WindowInfo& window_info);
 
     /* Initialize the ncurses UI */
-    void init_ui();
+    void init_ui(short preview_size);
 
     /* Redraw the playfield and then the active tetrimino over it */
     void redraw_playfield(const game::Playfield& playfield, const game::Tetrimino& active_tetrimino);

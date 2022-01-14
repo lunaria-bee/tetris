@@ -28,7 +28,7 @@ WINDOW* tetris::ui::create_window(const WindowInfo& window_info)
                 COLS / 2 + window_info.h_offset);
 }
 
-void tetris::ui::init_ui()
+void tetris::ui::init_ui(short preview_size)
 {
   // Initialize ncurses
   initscr();
@@ -58,9 +58,13 @@ void tetris::ui::init_ui()
   init_pair(GHOST_COLOR.at(game::TetriminoType::S), COLOR_GREEN, 0);
   init_pair(GHOST_COLOR.at(game::TetriminoType::Z), COLOR_RED, 0);
 
+  // Calculate actual preview window info from base
+  WindowInfo preview_window_info(PREVIEW_WINDOW_INFO);
+  preview_window_info.height = 3 * preview_size + 3;
+
   // Create windows
   play_window = create_window(PLAY_WINDOW_INFO);
-  preview_window = create_window(PREVIEW_WINDOW_INFO);
+  preview_window = create_window(preview_window_info);
   score_window = create_window(SCORE_WINDOW_INFO);
   box(play_window, 0, 0);
   box(preview_window, 0, 0);
