@@ -1,5 +1,5 @@
-#ifndef TETRIS_HPP
-#define TETRIS_HPP
+#ifndef TETRIS_GAME_HPP
+#define TETRIS_GAME_HPP
 
 #include <array>
 #include <chrono>

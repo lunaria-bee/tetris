@@ -1,3 +1,6 @@
+#ifndef TETRIS_CONTROL_HPP
+#define TETRIS_CONTROL_HPP
+
 #include "tetris_game.hpp"
 #include <ncurses.h>
 #include <chrono>
@@ -75,3 +78,5 @@ namespace tetris
     GameResult play_game(GameSettings settings);
   }
 }
+
+#endif
