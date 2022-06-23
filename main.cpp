@@ -1,3 +1,4 @@
+#include "tetris_cli.hpp"
 #include "tetris_control.hpp"
 #include "tetris_game.hpp"
 #include "tetris_log.hpp"
@@ -13,49 +14,6 @@
 using namespace tetris;
 
 
-namespace tetris
-{
-  namespace options
-  {
-    const char OPTSTRING[5] = "p:Gh";
-    const option LONGOPTS[4] = {
-      {"preview-size", true, nullptr, 'p'},
-      {"disable-gravity", false, nullptr, 256},
-      {"help", false, nullptr, 1024},
-      {0, 0, 0, 0},
-    };
-  }
-
-  namespace help
-  {
-    std::string usage;
-    std::string details;
-    std::string brief;
-    std::string complete;
-
-    void init(const std::string& run_command)
-    {
-      usage =
-        "Usage: " + run_command + " [OPTS]...";
-
-      details =
-        "-p, --preview-size SIZE  Set the number of tetriminoes to show in the piece preview." "\n"
-        "    --disable-gravity    Pieces will not fall unless soft dropped or hard dropped, and" "\n"
-        "                         must be hard dropped to lock in place.";
-
-      brief =
-        usage + "\n"
-        + "Try '" + run_command + " --help' for more inforation.";
-
-      complete =
-        usage +  "\n"
-        + "\n"
-        + details;
-    }
-  }
-}
-
-
 std::ofstream log::out;
 
 
@@ -65,61 +23,21 @@ int main(int const argc, char* const argv[])
   settings.gravity = true;
   settings.preview_size = 6;
 
-  int opt;
-  int* longindex = nullptr;
-  while ((opt = getopt_long(argc, argv, options::OPTSTRING, options::LONGOPTS, longindex)) != -1)
+  // Process command line options
+  bool cli_errors = cli::process_options(argc, argv, settings);
+  if (cli_errors)
   {
-    switch(opt)
-    {
-      case 'p':
-      {
-        int preview_size = atoi(optarg);
-        if (preview_size > 6)
-        {
-          std::cerr << "Error: "
-                    << "Maximum preview size is 6 ("
-                    << preview_size
-                    << " attempted)."
-                    << std::endl
-                    << "Aborting."
-                    << std::endl;
-          exit(-1);
-        }
-        settings.preview_size = preview_size;
-        break;
-      }
-
-      case 257: // --disable-gravity
-        settings.gravity = false;
-        break;
-
-      case 'h':
-        tetris::help::init(argv[0]);
-        std::cout << help::brief << std::endl;
-        exit(0);
-        break;
-
-      case 1024: // --help
-        tetris::help::init(argv[0]);
-        std:: cout << help::complete << std::endl;
-        exit(0);
-        break;
-
-      case '?':
-        tetris::help::init(argv[0]);
-        std::cout << help::brief << std::endl;
-        exit(-1);
-        break;
-
-      default:
-        break;
-    }
+    std::cerr << "Aborting." << std::endl;
+    exit(-1);
   }
 
+  // Open log file
   log::out.open("tetris.log");
 
+  // Initialize UI
   ui::init_ui(settings.preview_size);
 
+  // Set up and play game repeatedly until game-over or user quits
   control::GameResult result;
   bool play = true;
   while (play)
