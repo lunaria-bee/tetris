@@ -18,7 +18,7 @@ tetris::cli::HelpFormatter::HelpFormatter(const std::string& run_command)
 
   brief =
     usage + "\n"
-    + "
+    + "Available opts: --preview_size (-p), --disable-gravity\n"
     + "Try '" + run_command + " --help' for more inforation.";
 
   complete =
