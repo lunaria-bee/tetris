@@ -139,6 +139,9 @@ Tetrimino::Tetrimino(TetriminoType type_init)
       };
       pivot = Point(19, 4);
       break;
+
+    case TetriminoType::NONE:
+      break;
   }
 }
 

@@ -174,7 +174,8 @@ namespace tetris
     {
       Playfield playfield;
       Bag bag;
-      Tetrimino active_tetrimino{TetriminoType::I};
+      Tetrimino active_tetrimino{TetriminoType::NONE};
+      Tetrimino held_tetrimino{TetriminoType::NONE};
       short level = 1;
       short total_rows_cleared = 0;
       short total_rows_cleared_for_next_level = 5 * level;
