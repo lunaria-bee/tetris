@@ -58,11 +58,15 @@ int main(int const argc, char* const argv[])
     switch (result.end_type)
     {
       case control::EndType::GAME_OVER:
+        play = control::handle_game_over();
+        break;
+
       case control::EndType::QUIT:
         play = false;
         break;
 
       case control::EndType::RESTART:
+        play = true;
         break;
     }
   }

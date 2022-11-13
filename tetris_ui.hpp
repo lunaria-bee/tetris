@@ -4,6 +4,7 @@
 #include "tetris_game.hpp"
 #include <ncurses.h>
 #include <queue>
+#include <string>
 
 namespace tetris
 {
@@ -34,8 +35,17 @@ namespace tetris
     /* Redraw the preview of upcoming tetriminoes */
     void redraw_preview(const std::deque<game::Tetrimino>& tetrimino_queue, short preview_size);
 
+    /* Redraw the given text in the center of the given window */
+    void redraw_window_text(WINDOW* window,
+                            const WindowInfo& window_info,
+                            const std::wstring& text,
+                            const game::Point& offset=game::Point(0, 0));
+
     /* Redraw a screen indicating the game is paused */
     void redraw_pause_screen();
+
+    /* Redraw a screen indicating a game over */
+    void redraw_game_over_screen();
 
     /* Window info constants */
     const WindowInfo PLAY_WINDOW_INFO{23, 22, -11, -11};

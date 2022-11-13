@@ -172,3 +172,36 @@ GameResult tetris::control::play_game(GameSettings settings)
 
   return GameResult(EndType::GAME_OVER, game.level, game.score);
 }
+
+bool tetris::control::handle_game_over()
+{
+  ui::redraw_game_over_screen();
+
+  bool rc;
+  bool valid_input = false;
+  while (!valid_input)
+  {
+    auto result = INPUT_MAP.find(getch());
+    Command command = Command::DO_NOTHING;
+    if (result != INPUT_MAP.end())
+      command = result->second;
+
+    switch (command)
+    {
+      case Command::RESTART:
+        rc = true;
+        valid_input = true;
+        break;
+
+      case Command::QUIT:
+        rc = false;
+        valid_input = true;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  return rc;
+}

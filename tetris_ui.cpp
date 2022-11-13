@@ -1,11 +1,13 @@
 #include "tetris_ui.hpp"
 #include "tetris_game.hpp"
-#include "tetris_log.hpp"
 #include <ncurses.h>
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <thread>
 
 
@@ -166,6 +168,26 @@ void tetris::ui::redraw_preview(const std::deque<game::Tetrimino>& tetrimino_que
   wrefresh(preview_window);
 }
 
+void tetris::ui::redraw_window_text(WINDOW* window,
+                                    const WindowInfo& window_info,
+                                    const std::wstring& text,
+                                    const game::Point& offset)
+{
+  int newline_count = std::count(text.begin(), text.end(), '\n');
+
+  game::Point draw_point;
+  draw_point.row = (window_info.height / 2) - (newline_count / 2) + offset.row;
+
+  std::wstringstream stream(text);
+  std::wstring line;
+  while (std::getline(stream, line, L'\n'))
+  {
+    draw_point.col = (window_info.width / 2) - (line.length() / 2) + offset.col;
+    mvwaddwstr(window, draw_point.row, draw_point.col, line.c_str());
+    ++draw_point.row;
+  }
+}
+
 void tetris::ui::redraw_pause_screen()
 {
   for (short i=19; i<40; i++)
@@ -173,9 +195,25 @@ void tetris::ui::redraw_pause_screen()
     game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, 0));
     mvwaddwstr(play_window, window_coords.row, window_coords.col, L"                    ");
   }
-  game::Point window_coords = playfield_point_to_draw_window_point(game::Point(29, 3));
-  ++window_coords.col;
-  mvwaddwstr(play_window, window_coords.row, window_coords.col, L"PAUSED");
+  redraw_window_text(play_window, PLAY_WINDOW_INFO, L"PAUSED");
+
+  wrefresh(play_window);
+}
+
+void tetris::ui::redraw_game_over_screen()
+{
+  for (short i=19; i<40; i++)
+  {
+    game::Point window_coords = playfield_point_to_draw_window_point(game::Point(i, 0));
+    mvwaddwstr(play_window, window_coords.row, window_coords.col, L"                    ");
+  }
+
+  std::wstringstream game_over_text;
+  game_over_text << L"GAME OVER" << std::endl
+                 << std::endl
+                 << L"[r] Retry" << std::endl
+                 << L"[q] Quit" << std::endl;
+  redraw_window_text(play_window, PLAY_WINDOW_INFO, game_over_text.str());
 
   wrefresh(play_window);
 }

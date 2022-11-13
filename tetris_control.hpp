@@ -76,6 +76,9 @@ namespace tetris
 
     /* Play a game of tetris */
     GameResult play_game(GameSettings settings);
+
+    /* Handle game over */
+    bool handle_game_over();
   }
 }
 
