@@ -11,14 +11,14 @@ tetris::cli::HelpFormatter::HelpFormatter(const std::string& run_command)
   details =
     "-p, --preview-size SIZE  Set the number of tetriminoes to show in the piece preview." "\n"
     "    --disable-gravity    Pieces will not fall unless soft dropped or hard dropped, and" "\n"
-    "                         must be hard dropped to lock in place.\n"
+    "                         must be hard dropped to lock in place." "\n"
     "\n"
-    "-h                       Display brief help."
+    "-h                       Display brief help." "\n"
     "--help                   Display detailed help (i.e. this message).";
 
   brief =
     usage + "\n"
-    + "Available opts: --preview_size (-p), --disable-gravity\n"
+    + "Available opts: --preview_size (-p), --disable-gravity" "\n"
     + "Try '" + run_command + " --help' for more inforation.";
 
   complete =
@@ -27,8 +27,10 @@ tetris::cli::HelpFormatter::HelpFormatter(const std::string& run_command)
     + details;
 }
 
-bool tetris::cli::process_options(int const argc, char* const argv[], control::GameSettings& settings)
+opterror tetris::cli::process_options(int const argc, char* const argv[], control::GameSettings& settings)
 {
+  opterror rc = opterror_flag::NONE;
+
   int opt;
   int* longindex = nullptr;
   HelpFormatter help(argv[0]);
@@ -40,7 +42,7 @@ bool tetris::cli::process_options(int const argc, char* const argv[], control::G
         settings.preview_size = atoi(optarg);
         break;
 
-      case 257: // --disable-gravity
+      case 256: // --disable-gravity
         settings.gravity = false;
         break;
 
@@ -55,8 +57,7 @@ bool tetris::cli::process_options(int const argc, char* const argv[], control::G
         break;
 
       case '?':
-        std::cout << help.brief << std::endl;
-        exit(-1);
+        rc |= opterror_flag::BAD_OPT;
         break;
 
       default:
@@ -64,20 +65,20 @@ bool tetris::cli::process_options(int const argc, char* const argv[], control::G
     }
   }
 
-  bool cli_errors = false;
   if (settings.preview_size > 6)
   {
     std::cerr << "Error: "
               << "Maximum preview size is 6 (" << settings.preview_size << " attempted)."
               << std::endl;
-    cli_errors = true;
+    rc |= opterror_flag::BAD_ARG;
   }
   if (settings.preview_size < 0)
   {
     std::cerr << "Error: "
               << "Preview size must be non-negative (" << settings.preview_size << " attempted)."
               << std::endl;
+    rc |= opterror_flag::BAD_ARG;
   }
 
-  return cli_errors;
+  return rc;
 }

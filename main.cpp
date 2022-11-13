@@ -19,20 +19,32 @@ std::ofstream log::out;
 
 int main(int const argc, char* const argv[])
 {
+  // Open log file
+  log::out.open("tetris.log");
+
+  // Set option defaults
   control::GameSettings settings;
   settings.gravity = true;
   settings.preview_size = 6;
 
   // Process command line options
-  bool cli_errors = cli::process_options(argc, argv, settings);
+  cli::opterror cli_errors = cli::process_options(argc, argv, settings);
   if (cli_errors)
   {
+    cli::HelpFormatter help(argv[0]);
+
+    if (cli_errors & cli::opterror_flag::BAD_ARG)
+      std::cerr << std::endl << help.complete << std::endl;
+
+    else if (cli_errors & cli::opterror_flag::BAD_OPT)
+      std::cerr << help.brief << std::endl;
+
     std::cerr << "Aborting." << std::endl;
     exit(-1);
   }
 
-  // Open log file
-  log::out.open("tetris.log");
+  log::out << "settings.gravity=" << settings.gravity << std::endl;
+  log::out << "settings.preview_size=" << settings.preview_size << std::endl;
 
   // Initialize UI
   ui::init_ui(settings.preview_size);
