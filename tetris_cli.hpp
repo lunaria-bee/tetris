@@ -5,6 +5,8 @@
 #include <getopt.h>
 #include <string>
 
+// TODO resize UI when terminal is resized
+
 namespace tetris
 {
   namespace cli
