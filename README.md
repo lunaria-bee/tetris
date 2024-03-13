@@ -1,5 +1,5 @@
 # tetris
-Terminal tetris using ncurses. Although rudimentary and unfinished, you can still play a full game from beginning to end.
+Terminal tetris using ncurses. Although rudimentary and unfinished, you can still play a full game from beginning to end. Currently rewriting in Rust. The rest of this readme file describes the C++ implementation in cpp/.
 
 ## Controls
 
