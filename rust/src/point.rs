@@ -5,8 +5,8 @@ use std::ops;
 /// Used to represent points on the playfield and on the UI.
 #[derive(Debug, PartialEq)]
 pub struct Point {
-    row: i16,
-    col: i16,
+    pub row: usize,
+    pub col: usize,
 }
 
 impl ops::Add for Point {
@@ -38,21 +38,20 @@ mod tests {
     #[test]
     fn point_add() {
         assert_eq!(
-            Point{row: -2, col: 7}
-            + Point{row: 4, col: -17}
+            Point{row: 2, col: 7}
+            + Point{row: 4, col: 2}
             + Point{row: 3, col: 3},
-            Point{row: 5, col: -7}
+            Point{row: 9, col: 12}
         );
     }
 
     #[test]
     fn point_sub() {
         assert_eq!(
-            Point{row: -2, col: 7}
-            - Point{row: 4, col: -17}
-            - Point{row: 3, col: 3},
-            Point{row: -9, col: 21}
+            Point{row: 10, col: 13}
+            - Point{row: 4, col: 2}
+            - Point{row: 3, col: 5},
+            Point{row: 3, col: 6}
         );
     }
-
 }
