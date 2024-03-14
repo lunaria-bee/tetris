@@ -3,7 +3,7 @@ use std::ops;
 /// Two-dimensional point.
 ///
 /// Used to represent points on the playfield and on the UI.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Point {
     pub row: usize,
     pub col: usize,

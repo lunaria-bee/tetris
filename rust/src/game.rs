@@ -1,4 +1,9 @@
+mod playfield;
+
+use bitflags::bitflags;
+
 /// Enum to identify the type/shape of a tetrimino.
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum TetriminoType {
     NONE,
     O,
@@ -8,6 +13,10 @@ enum TetriminoType {
     J,
     S,
     Z,
+}
+
+impl Default for TetriminoType {
+    fn default() -> Self { TetriminoType::NONE }
 }
 
 /// Enum to identify the facing of a tetrimino.
