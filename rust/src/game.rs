@@ -18,8 +18,8 @@ enum TetriminoFacing {
     WEST,
 }
 
-/// Bitflags representing the results of collision tests.
 bitflags! {
+    /// Bitflags representing the results of collision tests.
     struct CollisionResult: u8 {
         const NONE  = 0b0000;
         const WALL  = 0b0001;
