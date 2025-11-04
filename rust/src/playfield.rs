@@ -1,13 +1,13 @@
 use std::ops;
 
 use crate::game::TetriminoType;
-use crate::Point;
+use crate::point::Point;
 
 /// Grid in which the tetriminos fall.
 ///
 /// Each cell in the grid stores a [TetriminoType] indicating what type of tetrimino has
 /// been locked into that cell.
-struct Playfield {
+pub struct Playfield {
     grid: [[TetriminoType; Self::COLS]; Self::ROWS],
 }
 

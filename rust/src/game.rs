@@ -1,10 +1,8 @@
-mod playfield;
-
 use bitflags::bitflags;
 
 /// Enum to identify the type/shape of a tetrimino.
 #[derive(Clone, Copy, Debug, PartialEq)]
-enum TetriminoType {
+pub enum TetriminoType {
     NONE,
     O,
     I,
@@ -20,7 +18,7 @@ impl Default for TetriminoType {
 }
 
 /// Enum to identify the facing of a tetrimino.
-enum TetriminoFacing {
+pub enum TetriminoFacing {
     NORTH,
     EAST,
     SOUTH,
@@ -30,9 +28,9 @@ enum TetriminoFacing {
 bitflags! {
     /// Bitflags representing the results of collision tests.
     struct CollisionResult: u8 {
-        const NONE  = 0b0000;
-        const WALL  = 0b0001;
-        const FLOOR = 0b0010;
-        const MINO  = 0b0100;
+        const NONE  = 1;
+        const WALL  = 1 << 1;
+        const FLOOR = 1 << 2;
+        const MINO  = 1 << 3;
     }
 }
